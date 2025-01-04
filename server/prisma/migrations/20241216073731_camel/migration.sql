@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "device" ADD COLUMN     "DetectionType" INTEGER,
+ADD COLUMN     "LocationType" INTEGER,
+ADD COLUMN     "PositionLat" DOUBLE PRECISION,
+ADD COLUMN     "PositionLon" DOUBLE PRECISION,
+ADD COLUMN     "RoadClass" INTEGER,
+ADD COLUMN     "RoadID" INTEGER,
+ADD COLUMN     "RoadName" VARCHAR(255),
+ADD COLUMN     "VDType" INTEGER;

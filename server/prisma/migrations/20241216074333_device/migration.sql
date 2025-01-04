@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "device" ALTER COLUMN "RoadID" SET DATA TYPE TEXT;

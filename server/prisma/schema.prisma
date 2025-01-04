@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/transit_view?schema=public"
+}
+
+model Cctv{
+  id Int @id @default(autoincrement())
+  cctvId String @db.VarChar(255)
+  location String? @db.VarChar(255)
+  roadId String? @db.VarChar(255)
+  roadName String? @db.VarChar(255)
+  positionLat Float?
+  positionLon Float?
+  videoStreamUrl String? @db.VarChar(255)
+  direction String? @db.VarChar(255)
+  @@map("cctv")
+}
+
+model Device{
+  id Int @id @default(autoincrement())
+  VDID String @db.VarChar(255)
+  SubAuthorityCode String? @db.VarChar(255)
+  BiDirectional Boolean?
+  VDType Int?
+  LocationType Int?
+  DetectionType Int?
+  PositionLon Float?
+  PositionLat Float?
+  RoadID String?
+  RoadName String? @db.VarChar(255)
+  RoadClass Int?
+  @@map("device")
+}
+
+model Road{
+  id Int @id @default(autoincrement())
+  VDID String @db.VarChar(255)
+  LinkID String @db.VarChar(255)
+  location String @db.VarChar(255)
+  Bearing String? @db.VarChar(255)
+  RoadDirection String? @db.VarChar(255)
+  LaneNum Int?
+  ActualLaneNum Int?
+  @@map("road")
+}
+
+model Traffic {
+  id              Int       @id @default(autoincrement()) // AI PK
+  roadId          Int
+  LaneID          Int?      
+  LaneType        Int?      
+  Speed           Float?
+  Volume          Int?
+  Occupancy       Float?
+  MVolume         Int?      
+  SVolume         Int?      
+  LVolume         Int?      
+  TVolume         Int?      
+  MSpeed          Float?
+  SSpeed          Float?
+  LSpeed          Float?
+  TSpeed          Float?
+  Status          Int?      
+  DataCollectTime DateTime?
+}
+
+model TrafficStatus{
+  id Int @id @default(autoincrement())
+  srcdetail String? @db.VarChar(255)
+  eventTime DateTime?
+  roadtype String? @db.VarChar(255)
+  UID String? @db.VarChar(255)
+  road String? @db.VarChar(255)
+  areaNm String? @db.VarChar(255)
+  y1 Float
+  modDttm DateTime
+  x1 Float?
+  comment String? @db.VarChar(65535)
+  @@map("traffic_status")
+}
+
+enum LogLevel {
+  TRACE
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+  ALERT
+  EMERGENCY
+}
+
+model SystemLog {
+  id       Int      @id @default(autoincrement())
+  level    LogLevel
+  scope    String   @db.VarChar(255)
+  message  String   @db.VarChar(255)
+  details  Json?    // 可選字段，用於存儲額外上下文信息
+  created  DateTime @default(now())
+
+  @@map("system_log")
+  @@index([level, created])
+}
+
+model TravelSegment {
+  id            Int      @id @default(autoincrement()) // KEY AI
+  name          String   // 路段名稱
+  startX        Float    // 起點 X 軸座標
+  startY        Float    // 起點 Y 軸座標
+  endX          Float    // 終點 X 軸座標
+  endY          Float    // 終點 Y 軸座標
+  middleX       Float?
+  middleY       Float?
+  direction     String   // 方向
+  travelTime    Int?   // 旅行時間，可為 NULL
+  createdAt     DateTime? @default(now()) // 記錄建立時間
+
+  @@map("travel_segments") // 修改資料表名稱為 travel_segments
+}
+
+model TravelTimeRecord {
+  id            Int      @id @default(autoincrement()) // KEY AI
+  travelSegmentId Int
+  travelTime    Int   // 旅行時間，可為 NULL
+  createdAt     DateTime? @default(now()) // 記錄建立時間
+
+  @@map("travel_time_record") // 修改資料表名稱為 travel_segments
+}
+
+model Panel{
+  id            Int      @id @default(autoincrement()) // KEY AI
+  roadId        Int
+  intervalTime0 Int @default(5)
+  flowGate0     Int @default(0)
+  rateGate0     Int @default(0)
+  intervalTime1 Int @default(10)
+  flowGate1     Int @default(0)
+  rateGate1     Int @default(0)
+  intervalTime2 Int @default(15)
+  flowGate2     Int @default(0)
+  rateGate2     Int @default(0)
+  intervalTime3 Int @default(60)
+  flowGate3     Int @default(0)
+  rateGate3     Int @default(0)
+  lineAlert     Boolean @default(false)
+  alert         Boolean @default(false)
+  @@map("panel")
+}
