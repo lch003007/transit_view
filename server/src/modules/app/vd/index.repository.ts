@@ -12,7 +12,8 @@ import { PrismaService,
     roadDeleteManyArgs,
     roadFindManyArgs,
     roadUpdateManyArgs,
-    trafficCreateManyData
+    trafficCreateManyData,
+    trafficFindManyArgs
  } from "src/modules/prisma/prisma.service";
 
 
@@ -49,6 +50,10 @@ export class VdRepository{
 
     async deleteRoad(props:roadDeleteManyArgs){
         return this.prisma.executeOperation(props,'road','deleteMany')
+    }
+
+    async getTraffic(props:trafficFindManyArgs={}){
+        return this.prisma.executeOperation(props,'traffic','findMany')
     }
 
 

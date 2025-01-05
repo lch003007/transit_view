@@ -5,10 +5,11 @@ import { VdController } from "./index.controller";
 import { VdTask } from "./index.task";
 import { HttpClientModule } from "src/core/httpClient/index.module";
 import { MyLoggerModule } from "src/core/myLogger/index.module";
+import { VdService } from "./index.service";
 
 @Module({
     imports:[PrismaModule,HttpClientModule,MyLoggerModule],
-    providers:[VdRepository,VdTask],
+    providers:[VdRepository,VdTask,VdService],
     exports:[VdRepository],
     controllers:[VdController]
 })

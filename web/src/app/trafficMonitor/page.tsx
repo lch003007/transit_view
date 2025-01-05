@@ -12,8 +12,8 @@ export default function TrafficMonitor(){
         <ItemPicker itemKey="location" title='路口選擇' path="vd/road" />
         <Grid spacing={1} container>
             {Array.from({length:itemLength},(_,index)=>{
-                return <Grid item xs={12/Math.sqrt(itemLength)}>
-                    <Panel parentHeight={300} parentWidth={600} />
+                return <Grid item xs={12/Math.sqrt(itemLength)} sx={{height:`${100/Math.sqrt(itemLength)}%`}}>
+                    <Panel />
                     </Grid>
             })}
             </Grid>

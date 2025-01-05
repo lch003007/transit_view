@@ -1,10 +1,11 @@
 import { Controller, Get,Post,Body } from '@nestjs/common';
 import { VdRepository } from './index.repository';
-import { deviceCreateManyData, deviceDeleteManyArgs, deviceFindManyArgs, deviceUpdateManyArgs, panelCreateManyData, panelDeleteManyArgs, panelFindManyArgs, panelUpdateManyArgs, roadCreateManyData, roadDeleteManyArgs, roadFindManyArgs, roadUpdateManyArgs } from 'src/modules/prisma/prisma.service';
+import { deviceCreateManyData, deviceDeleteManyArgs, deviceFindManyArgs, deviceUpdateManyArgs, panelCreateManyData, panelDeleteManyArgs, panelFindManyArgs, panelUpdateManyArgs, roadCreateManyData, roadDeleteManyArgs, roadFindManyArgs, roadUpdateManyArgs, trafficFindManyArgs } from 'src/modules/prisma/prisma.service';
+import { VdService } from './index.service';
 
 @Controller('vd')
 export class VdController {
-  constructor(private repository:VdRepository) {}
+  constructor(private repository:VdRepository,private service:VdService) {}
 
   @Post('device')
   async getDevice(@Body()props?:deviceFindManyArgs){
@@ -47,8 +48,9 @@ export class VdController {
   }
 
   @Post('panel')
-  async getPanel(@Body()props?:panelFindManyArgs){
-    return this.repository.getPanel(props)
+  async getPanel(@Body()data:any){
+
+    return this.service.getPanel(data['roadId'])
   }
 
   @Post('panel/insert')
@@ -66,4 +68,8 @@ export class VdController {
     return this.repository.deletePanel(props)
   }
 
+  @Post('traffic')
+  async getTraffic(@Body()props:trafficFindManyArgs){
+    return this.repository.getTraffic(props)
+  }
 }

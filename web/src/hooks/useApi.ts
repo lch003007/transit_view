@@ -22,7 +22,6 @@ function useApi(){
     )=> {
         try {
             setLoading(true)
-            console.log(data)
             const response: AxiosResponse = await axios.post(`${baseUrl}/${path}`, data, config);
             setLoading(false)
             return response.data;

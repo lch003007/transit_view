@@ -25,7 +25,7 @@ import { Form } from "./Form";
 
 
 // ManualTable 組件
-export function ManualTable({ data=[],title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[] }: { data?: any[],title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData:string[] }) {
+export function ManualTable({ data=[],title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[] }: { data?: any[],title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData?:string[] }) {
   const {openDialog,closeDialog} = useContext(DialogContext)
   const addKey = 'formAdd'
   const deleteKey = 'formDelete'
