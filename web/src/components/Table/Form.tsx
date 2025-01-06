@@ -6,16 +6,19 @@ import { useContext, useEffect, useState } from "react";
 import { DialogContext } from "@/contexts/DialogContext";
 import useApi from "@/hooks/useApi";
 
-export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide=[],path,addKey,editKey,deleteKey,numberData=[],booleanData=[]}:any){
+export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',hide=[],path,numberData=[],booleanData=[],reload=true,callbackFunction=(state:any)=>{}}:any){
     const {post} = useApi()
-    const {closeDialog} = useContext(DialogContext)
+    const {closeDialog,keys} = useContext(DialogContext)
+    const {addKey,deleteKey,editKey,panelKey} = keys
     const [state,setState] = useState<Record<string,string>>({})
     const notNullHasData = notNull.map((item:string)=>{
         return Boolean(state[item])
     }).filter((item:boolean)=>item).length==notNull.length
 
-    const reloadPage = () => {
-        window.location.reload();
+    const callback = () => {
+        if(reload)
+            window.location.reload();
+        callbackFunction(state)
     }
 
 
@@ -37,7 +40,6 @@ export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide
             </Box>
         <MyText disabled={type==deleteKey} notNull={notNull.includes(key)} type="text" onChange={(e)=>{
             setState((prevData)=>{
-
                 return {...prevData,[key]:e.target.value}
             })
         }
@@ -50,7 +52,7 @@ export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide
 
 
     <MyButton style={{color:notNullHasData?'black':'gray'}} onClick={()=>{
-        if([addKey,editKey].includes(type))
+        if([addKey,editKey,panelKey].includes(type))
         {
             if(notNullHasData){
                 if(type==addKey){
@@ -64,7 +66,7 @@ export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide
                         insertData[key] = value
                     })
                     post(path,insertData)
-                    reloadPage();
+                    callback();
                 }
                 else{
                     const updateData = {
@@ -84,8 +86,10 @@ export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide
                     }
                         
                 })
+                console.log(path)
+                console.log(updateData)
                     post(path,updateData)
-                    reloadPage();
+                    callback();
                 }
             }else{
 
@@ -93,7 +97,7 @@ export function Form({title,notNull,defaultData=[],type,buttonText='確定',hide
         }
         else{
             post(path,{where:{id:Number(defaultData['id'])}})
-            reloadPage();
+            callback();
         }
 
         closeDialog(type)

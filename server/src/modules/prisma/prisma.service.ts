@@ -13,6 +13,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit,OnModule
         await this.$disconnect();
         console.log('Disconnected from database');
       }
+      
 
       async executeOperation<T extends keyof PrismaClient, M extends keyof PrismaClient[T]>(
         props: any | any[],
@@ -24,8 +25,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit,OnModule
                 props.map(item => (this[tableName][method] as Function)(item))
             );
         } else {
-            const a = await (this[tableName][method] as Function)(props)
-            return a;
+            return await (this[tableName][method] as Function)(props)
+            
         }
     }
 

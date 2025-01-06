@@ -26,10 +26,11 @@ import { Form } from "./Form";
 
 // ManualTable 組件
 export function ManualTable({ data=[],title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[] }: { data?: any[],title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData?:string[] }) {
-  const {openDialog,closeDialog} = useContext(DialogContext)
-  const addKey = 'formAdd'
-  const deleteKey = 'formDelete'
-  const editKey = 'formEdit'
+  const {openDialog,closeDialog,keys} = useContext(DialogContext)
+  const {addKey,deleteKey,editKey} = keys
+  // const addKey = 'formAdd'
+  // const deleteKey = 'formDelete'
+  // const editKey = 'formEdit'
   const [keyword,setKeyword] = useState('')
   const [page, setPage] = useState(0); // 當前頁數
   const [rowsPerPage, setRowsPerPage] = useState(5); // 每頁顯示的行數

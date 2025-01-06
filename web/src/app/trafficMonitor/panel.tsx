@@ -5,15 +5,21 @@ import { styled } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useContext, useEffect, useRef, useState } from "react";
+import { DialogContext } from "@/contexts/DialogContext";
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import useApi from "@/hooks/useApi";
 import EditIcon from '@mui/icons-material/Edit';
+import MyDialog from "@/components/MyDialog";
+import { Form } from "@/components/Table/Form";
 
 
 
 function Panel() {
     const {itemsSelected,setItemsSelected,itemLength} = useContext(ItemPickerContext)
+    const {keys,openDialog} = useContext(DialogContext)
+    const {panelKey} = keys
     const {post} = useApi()
+    const [defaultData,setDefaultData] = useState({})
     // const width = parentWidth / 5;
     // const height = parentHeight / 7;
     const panelRef = useRef(false)
@@ -28,6 +34,7 @@ function Panel() {
             return height>width/3?width/3:height
     }
     const getVdTraffic = ()=>{
+        console.log(456)
         const intervalTime = Math.max(...Array.from({ length: 4 }, (_, index) =>{
             return Number(panelData[`intervalTime${index}`])
         }))*Number(panelData['ActualLaneNum'])
@@ -40,11 +47,13 @@ function Panel() {
               DataCollectTime: 'desc'
             }
           }).then((data)=>{
+            console.log(789)
             setPanelData((prevData)=>{
                 Array.from({ length: 4 }, (_, index) =>{
                     prevData[`flowValue${index}`] = data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)
                     prevData[`rateValue${index}`] = String(Math.round(data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)/Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])))
                 })
+                console.log(prevData)
                 return prevData
             })
 
@@ -130,6 +139,7 @@ function Panel() {
                 const roadData = JSON.parse(e.dataTransfer.getData('item'))
                 console.log(roadData)
                 post('vd/panel',{roadId:roadData.id}).then(data=>{
+                    setDefaultData(data)
                     setPanelData(()=>{
                         const prevData = {...roadData,...data}
                         Array.from({ length: 4 }, (_, index) => {
@@ -150,14 +160,19 @@ function Panel() {
                 <>
         
             <Box sx={{display:'flex',justifyContent:'space-between'}}>
-                <Box sx={{fontSize:height,color:'white'}}>{panelData.location??''}</Box>
+                <Box sx={{fontSize:Math.min(height,height/(panelData.location.length/16)),color:'white',display:'flex',alignItems:'center'}}>{panelData.location??''}</Box>
                 <Box>
                     {/* <CircleIcon sx={{fontSize:height}} />
                     <img style={{height:height}} src="image/line_icon_gray.png"/>
                     <img style={{height:height}} src="image/alert_icon.png"/> */}
+                    <Box sx={{display:'flex'}}>
+                    <IconButton onClick={()=>{openDialog(panelKey)}}>
+                    <EditIcon sx={{fontSize:height,color:'white'}} />
+                    </IconButton>
                     <IconButton onClick={()=>{setPanelData({})}}>
                     <CloseIcon  sx={{fontSize:height,color:'white'}}/>
                     </IconButton>
+                    </Box>
                 </Box>
             </Box>
             <MyTable>
@@ -198,6 +213,56 @@ function Panel() {
             </MyTable>
             </>
                 }
+                <MyDialog openKey={panelKey} >
+                    <Form
+                    title={{
+                        id: "編號",
+                        roadId: "道路編號",
+                        intervalTime0: "間隔時間1",
+                        flowGate0: "流量門檻1",
+                        rateGate0: "速率門檻1",
+                        intervalTime1: "間隔時間2",
+                        flowGate1: "流量門檻2",
+                        rateGate1: "速率門檻2",
+                        intervalTime2: "間隔時間3",
+                        flowGate2: "流量門檻3",
+                        rateGate2: "速率門檻3",
+                        intervalTime3: "間隔時間4",
+                        flowGate3: "流量門檻4",
+                        rateGate3: "速率門檻4",
+                      }}
+                    defaultData={defaultData}
+                    type={panelKey}
+                    hide={['id','roadId']}
+                    path='vd/panel/update'
+                    numberData={[
+                        "id",
+                        "roadId",
+                        "intervalTime0",
+                        "flowGate0",
+                        "rateGate0",
+                        "intervalTime1",
+                        "flowGate1",
+                        "rateGate1",
+                        "intervalTime2",
+                        "flowGate2",
+                        "rateGate2",
+                        "intervalTime3",
+                        "flowGate3",
+                        "rateGate3"
+                      ]}
+                      reload={false}
+                      callbackFunction={(state:any)=>{
+                        setPanelData((prevData)=>{
+                            Object.keys(state).map(key=>{
+                                prevData[key] = state[key]
+                            })
+                            return prevData
+                        })
+                        setDefaultData(state)
+                      }}
+                    />
+                </MyDialog>
         </Box>
     );
 }

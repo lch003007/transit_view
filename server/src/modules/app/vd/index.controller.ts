@@ -17,6 +17,7 @@ export class VdController {
     return this.repository.insertDevice(props)
   }
 
+
   @Post('device/update')
   async updateDevice(@Body()props:deviceUpdateManyArgs){
     return this.repository.updateDevice(props)
@@ -70,6 +71,6 @@ export class VdController {
 
   @Post('traffic')
   async getTraffic(@Body()props:trafficFindManyArgs){
-    return this.repository.getTraffic(props)
+    return await this.repository.getTraffic(props)
   }
 }

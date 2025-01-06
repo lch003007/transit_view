@@ -16,7 +16,7 @@ export class CctvController{
         console.log(props)
         return this.repository.insertCctv(props)
     }
-
+    
     @Post('update')
     async updateCctv(@Body()props:cctvUpdateManyArgs){
         return this.repository.updateCctv(props)

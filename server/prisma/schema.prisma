@@ -72,6 +72,8 @@ model Traffic {
   TSpeed          Float?
   Status          Int?      
   DataCollectTime DateTime?
+  @@index([roadId,DataCollectTime])
+  @@index([roadId])
 }
 
 model TrafficStatus{
@@ -131,7 +133,11 @@ model TravelSegment {
 model TravelTimeRecord {
   id            Int      @id @default(autoincrement()) // KEY AI
   travelSegmentId Int
-  travelTime    Int   // 旅行時間，可為 NULL
+  travelTime    Int?   // 旅行時間，可為 NULL
+  travelTimePredict1 Int?
+  travelTimePredict2 Int?
+  travelTimePredict3 Int?
+  travelTimePredict4 Int?
   createdAt     DateTime? @default(now()) // 記錄建立時間
 
   @@map("travel_time_record") // 修改資料表名稱為 travel_segments
