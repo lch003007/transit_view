@@ -4,6 +4,7 @@ import { useContext } from "react"
 import { LayoutContext } from "@/contexts/LayoutContext"
 import Link from "next/link"
 import {routes} from '@/routes'
+import { getCookie } from "cookies-next"
 
 export default function Sidenav(){
     const {isSidenavHide,setHoverSidenav} = useContext(LayoutContext)
@@ -13,8 +14,9 @@ export default function Sidenav(){
     const outerExpendWidth = 1
     const innerCollapseWidth = 0.3
     const innerExpendWidth = 1
-
-
+    const jwt = getCookie('jwt')
+    if(!jwt)
+        return <></>
     return <Box sx={{
         height:'94vh',
         backgroundColor:'#212A39',
