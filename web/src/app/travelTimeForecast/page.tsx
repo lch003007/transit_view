@@ -3,6 +3,7 @@ import { ManualTable } from "@/components/Table/manualTable"
 import { DbTable } from "@/components/Table/dbTable";
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi";
+import Wrapper from "@/components/Wrapper";
 
 function formatDuration(seconds: number): string {
   if (seconds <= 0) return "0秒";
@@ -29,6 +30,7 @@ function formatDuration(seconds: number): string {
 export default function TravelTimeForecast(){
     const {post} = useApi()
   const [tableData,setTableData] = useState([])
+  const [isLoading,setLoading] = useState(false)
     useEffect(()=>{
       post('travelTime/predict').then((data)=>{
         setTableData(data)
@@ -36,24 +38,23 @@ export default function TravelTimeForecast(){
     },[])
 
     // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
-    return <><ManualTable data={tableData.map(item=>{
+    return <Wrapper isLoading={isLoading}><ManualTable data={tableData.map(item=>{
       const name = item['name']
-      const travelTime = formatDuration(item['travelTime'])
       return {
         name:name,
-        travelTime:travelTime,
-        travelTime5:travelTime,
-        travelTime15:travelTime,
-        travelTime30:travelTime,
-        travelTime60:travelTime,
+        travelTime:formatDuration(item['travelTime']),
+        travelTimePredict1:formatDuration(item['travelTimePredict1']),
+        travelTimePredict2:formatDuration(item['travelTimePredict2']),
+        travelTimePredict3:formatDuration(item['travelTimePredict3']),
+        travelTimePredict4:formatDuration(item['travelTimePredict4']),
       }
     })}  title={
       {
       name:'路段',
       travelTime:'旅行時間',
-      travelTime5:'5分鐘後',
-      travelTime15:'15分鐘後',
-      travelTime30:'30分鐘後',
-      travelTime60:'60分鐘後',
-    }} /></>
+      travelTimePredict1:'5分鐘後',
+      travelTimePredict2:'15分鐘後',
+      travelTimePredict3:'30分鐘後',
+      travelTimePredict4:'60分鐘後',
+    }} /></Wrapper>
   }

@@ -111,12 +111,13 @@ export class VdTask implements OnModuleInit{
         roads = await this.repository.getRoad()
 
         for(const trafficData of trafficDatas){
-            trafficData['roadId'] = roads.find(item=>item.LinkID==trafficData.LinkID)['id']
+            const road = roads.find(item=>item.LinkID==trafficData.LinkID)
+            trafficData['roadId'] = road?.id
             delete trafficData['VDID']
             delete trafficData['LinkID']
         }
 
-        await this.repository.insertTraffic(trafficDatas)
+        await this.repository.insertTraffic(trafficDatas.filter(item=>item.roadId))
         await this.logger.info(`insert ${trafficDatas.length} VD data successful!`)
         
     }

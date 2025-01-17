@@ -5,6 +5,7 @@ import { DbTable } from "@/components/Table/dbTable";
 import { useEffect, useState,useContext } from "react";
 import Loading from "../loading";
 import { LoadingContext } from "@/contexts/Loading";
+import Wrapper from "@/components/Wrapper";
 
 function formatDuration(seconds: number): string {
   if (seconds <= 0) return "0秒";
@@ -30,22 +31,24 @@ function formatDuration(seconds: number): string {
 
 export default function TravelTime(){
   const {post} = useApi()
-  const {isLoading} = useContext(LoadingContext)
+  const [isLoading,setLoading] = useState(false)
+
   const title = {
     name:'路段',
     travelTime:'旅行時間'
   }
   const [tableData,setTableData] = useState([])
     useEffect(()=>{
+      setLoading(true)
       post('travelTime/normal').then((data)=>{
         setTableData(data)
-        
+        setLoading(false)
     })
     },[])
     
     // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
     
-    return isLoading?<Loading/>:<><ManualTable data={tableData.map(item=>({
+    return <Wrapper isLoading={isLoading}><ManualTable data={tableData.map(item=>({
       name:item['name'],travelTime:formatDuration(item['travelTime'])
-    }))} title={title} /></>
+    }))} title={title} /></Wrapper>
   }

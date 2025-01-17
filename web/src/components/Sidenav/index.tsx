@@ -4,7 +4,9 @@ import { useContext } from "react"
 import { LayoutContext } from "@/contexts/LayoutContext"
 import Link from "next/link"
 import {routes} from '@/routes'
-import { getCookie } from "cookies-next"
+import { MyButton } from "../MyInput"
+import { deleteCookie } from "cookies-next"
+import { getCookie } from "cookies-next";
 
 export default function Sidenav(){
     const {isSidenavHide,setHoverSidenav} = useContext(LayoutContext)
@@ -14,9 +16,8 @@ export default function Sidenav(){
     const outerExpendWidth = 1
     const innerCollapseWidth = 0.3
     const innerExpendWidth = 1
-    const jwt = getCookie('jwt')
-    if(!jwt)
-        return <></>
+    const auth:any = getCookie('auth')
+    const authArray = auth?[...JSON.parse(auth),'logout']:['logout']
     return <Box sx={{
         height:'94vh',
         backgroundColor:'#212A39',
@@ -37,7 +38,7 @@ export default function Sidenav(){
         }}
         >
 
-        {routes.map(route=>{
+        {routes.filter(route=>authArray.includes(route.path)).map(route=>{
             return <li key={route.path} style={{position:'relative'}}>
                                 <Box sx={{
                     height:`${innerCollapseWidth*baseWidth}vw`,
@@ -49,25 +50,11 @@ export default function Sidenav(){
                     borderRadius:'12px',
                     position:'absolute',
                     minWidth:`${innerCollapseWidth*miniBaseWidth}px`,
-                    pointerEvents:'none'
+                    minHeight:`${innerCollapseWidth*miniBaseWidth}px`,
+                    pointerEvents:'none',
+                    margin:0
                     }}>
-                        {/* {isSidenavHide?<></>:
-                        <Box
-                        sx={{
-                          position: "absolute",
-                        //   top: '10%',
-                        //   bottom: '10%',
-                          
-                          right: 3,
-                          width: "1px",
-                          minHeight:`${miniBaseWidth*0.2}px`,
-                          backgroundColor: "white",
-                        }}
-                      />
-                        } */}
-                        
-                    <route.icon sx={{color:'white',fontSize:`${miniBaseWidth*0.2}px`,}}/>
-
+                    <route.icon sx={{color:'white',fontSize:`${miniBaseWidth*0.2}px`}}/>
                 </Box>
                 <Link 
                 onMouseEnter={()=>{setHoverSidenav(true)}}
@@ -93,11 +80,12 @@ export default function Sidenav(){
                     }}>
                     
                     <Box sx={{
-                        left:`${innerCollapseWidth*miniBaseWidth}px`,
+                        left:`max(${innerCollapseWidth*miniBaseWidth}px,${innerCollapseWidth*baseWidth}vw)`,
                         position:'relative',
                         fontSize:'16px',
                         color:'white',
-                        whiteSpace:'nowrap'}}>
+                        whiteSpace:'nowrap',
+                        textAlign:'end'}}>
                             {route.name}
                         {/* {!isSidenavHide?`${route.name}`:<></>} */}
                     </Box>
@@ -109,5 +97,6 @@ export default function Sidenav(){
             </li>
         })}
         </Box>
+
         </Box>
 }

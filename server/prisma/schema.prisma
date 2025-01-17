@@ -162,3 +162,13 @@ model Panel{
   alert         Boolean @default(false)
   @@map("panel")
 }
+
+model User {
+  id        Int      @id @default(autoincrement()) // 唯一主鍵
+  username  String   @unique @db.VarChar(255)                      // 用戶名，必須唯一
+  password  String   @db.VarChar(65535)                               // 密碼（建議加密存儲）
+  auth      String   @default("") @db.VarChar(255)
+  createdAt DateTime @default(now())             // 資料創建時間
+  updatedAt DateTime @updatedAt                 // 資料更新時間
+  @@map("user")
+}

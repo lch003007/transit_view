@@ -8,6 +8,7 @@ import {
     Timeline,
     QueryBuilder,
     Build,
+    Logout
   } from "@mui/icons-material";
 
 export const routes = [
@@ -56,4 +57,9 @@ export const routes = [
       name: '設備及建構管理', // 設備及建構管理：對相關設備進行監測和管理
       icon: Build,
     },
+    {
+      path:'logout',
+      name:'登出',
+      icon:Logout
+    }
   ];

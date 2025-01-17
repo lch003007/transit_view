@@ -3,10 +3,11 @@ import { DbTable } from "@/components/Table/dbTable"
 import {TextField,Box} from "@mui/material";
 import { useState } from "react";
 import { deleteCookie } from "cookies-next";
+import Wrapper from "@/components/Wrapper";
 
 export default function RoadEvents(){
     deleteCookie('jwt')
-    const [keyword,setKeyword] = useState('')
+    
     const title = {
         id:'編號',
         roadtype:'類別',

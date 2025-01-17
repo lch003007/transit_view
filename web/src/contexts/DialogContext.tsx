@@ -22,7 +22,6 @@ function DialogProvider({children}:any){
             setOpen((prevData:any)=>({...prevData,[key]:true}))
         },
         closeDialog:(key:string)=>{
-            console.log(key)
             setOpen((prevData:any)=>({...prevData,[key]:false}))
         },
         getOpen:(key:string)=>{

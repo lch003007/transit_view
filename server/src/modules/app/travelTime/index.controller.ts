@@ -35,4 +35,9 @@ export class TravelTimeController {
   async deleteTravelTime(@Body()props:travelSegmentDeleteManyArgs){
     return this.repository.deleteTravelSegment(props)
   }
+
+  @Post('volume/predict')
+  async getVolumePredict(@Body()props:any){
+    return this.service.getVolumePredict(props.date)
+  }
 }

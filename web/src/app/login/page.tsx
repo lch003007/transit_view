@@ -2,20 +2,17 @@
 import { MyButton, MyText } from "@/components/MyInput";
 import { Box, Typography } from "@mui/material";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import useApi from "@/hooks/useApi";
 import { setCookie } from "cookies-next";
-import { getCookie } from "cookies-next";
 export default function Login() {
     const {post} = useApi()
-    const router = useRouter()
     const [username,setUsername] = useState('')
     const [password,setPassword] = useState('')
-    const [error,setError] = useState(false)
+    const [error,setError] = useState('')
     const [buttonBackground,setButtonBackground] = useState('linear-gradient(135deg, #1e90ff, #6495ed)')
 
-    if(getCookie('jwt'))
-        router.push('/liveVideo')
+    // if(getCookie('jwt'))
+    //     router.push('/liveVideo')
     return (
         <Box
             sx={{
@@ -87,7 +84,7 @@ export default function Login() {
                         setPassword(e.target.value)
                     }} />
                 </Box>
-                    {error?<Box sx={{color:'red'}}>帳號或密碼錯誤</Box>:<></>}
+                    <Box sx={{color:'red'}}>{error}</Box>
                 {/* 登入按鈕 */}
                 <MyButton
                     style={{
@@ -107,18 +104,19 @@ export default function Login() {
                         setButtonBackground('linear-gradient(135deg, #1e90ff, #6495ed)')
                     }}
                     onClick={()=>{
-                        console.log(123)
+
                         post('auth/login',{username:username,password:password}).then(data=>{
-                            console.log(123)
-                            if(data.error)
-                                setError(true)
-                            else
+                            if(data.success)
                             {
+                                
                                 setCookie('jwt',data.access_token)
-                                setError(false)
-                                router.push('/liveVideo')
-                                console.log(data.access_token)
+                                setCookie('auth',data.auth)
+                                setError('')
+                                window.location.reload()
+                                // router.push('/liveVideo')
                             }
+                            else
+                                setError(data.message)
                         })
                     }}
                 >

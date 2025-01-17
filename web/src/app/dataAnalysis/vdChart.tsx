@@ -9,6 +9,7 @@ import { MyCheckBoxGroup } from "@/components/MyInput";
 import MyChart from "@/components/MyChart";
 import { light } from "@mui/material/styles/createPalette";
 import { Tabs, Tab, Box, Typography,Paper } from '@mui/material';
+import {Chart as ChartJS} from 'chart.js'
 
 
 
@@ -23,6 +24,8 @@ function VdChart({endDate,amount = 100}:any) {
     const [height,setHeight] = useState(0)
     const [panelData,setPanelData] = useState<Record<string,any>>({})
     const boxRef = useRef<HTMLDivElement>(null)
+    const chartRefRate = useRef<ChartJS | null>(null)
+    const chartRefVolume = useRef<ChartJS | null>(null)
     const handleTabChange = (event:any, newValue:any) => {
         setActiveTab(newValue);
     };
@@ -62,12 +65,21 @@ function VdChart({endDate,amount = 100}:any) {
     },[endDate])
 
     useEffect(()=>{
-        if(boxRef.current?.parentElement)
+      
+      if(boxRef.current?.parentElement)
         {
             setWidth(boxRef.current.offsetWidth/5)
             setHeight(boxRef.current.offsetHeight/7)
+
         }
     },[itemLength])
+
+    useEffect(()=>{
+      chartRefRate.current?.resize();
+      chartRefRate.current?.update();
+      chartRefVolume.current?.resize();
+      chartRefVolume.current?.update();
+    },[width,height])
     
     return (
         <Box height={"100%"} width={"100%"} ref={boxRef}>
@@ -175,6 +187,7 @@ function VdChart({endDate,amount = 100}:any) {
       
                 {activeTab === 0 && (
                   <MyChart
+                  ref={chartRefRate}
                     labels={Array.from({ length: amount }, (_, index) =>
                       endDate.subtract(index, "minutes").format("HH:mm")
                     ).reverse()}
@@ -206,6 +219,7 @@ function VdChart({endDate,amount = 100}:any) {
       
                 {activeTab === 1 && (
                   <MyChart
+                  ref={chartRefVolume}
                     labels={Array.from({ length: amount }, (_, index) =>
                       endDate.subtract(index, "minutes").format("HH:mm")
                     ).reverse()}

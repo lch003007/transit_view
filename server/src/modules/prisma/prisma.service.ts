@@ -76,3 +76,8 @@ export type panelCreateManyData = Prisma.PanelCreateInput[]
 export type panelFindManyArgs = Prisma.PanelFindManyArgs
 export type panelUpdateManyArgs = Prisma.PanelUpdateManyArgs
 export type panelDeleteManyArgs = Prisma.PanelDeleteManyArgs
+
+export type userCreateManyData = Prisma.UserCreateInput[]
+export type userFindManyArgs = Prisma.UserFindManyArgs
+export type userUpdateManyArgs = Prisma.UserUpdateManyArgs
+export type userDeleteManyArgs = Prisma.UserDeleteManyArgs

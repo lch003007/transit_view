@@ -12,7 +12,10 @@ export default function StreamView({id}:{id:number}){
     const [videoScale,setVideoScale] = useState(1)
     const boxRef = useRef<HTMLDivElement>(null)
     const video = {videoStreamUrl:'',location:'',...itemsSelected[id]}
-    
+    const [renderTrigger, setRenderTrigger] = useState({0:0,1:0})
+    const [count,setCount] = useState(0)
+    const [zIndex,setZIndex] = useState({0:0,1:0})
+    console.log(renderTrigger)
     useEffect(()=>{
         if(boxRef.current)
             {
@@ -27,6 +30,24 @@ export default function StreamView({id}:{id:number}){
             }
         // setVideo(fakeLive()[0])
     },[itemLength])
+    // console.log(renderTrigger)
+    // console.log(count)
+    useEffect(()=>{
+        const interval = setInterval(()=>{
+            // console.log(count)
+            setCount((prevCount)=>{
+                setRenderTrigger((prevData:any)=>{
+                    // console.log({...prevData,[prevCount%2]:prevData[prevCount%2]+1})
+                    return {...prevData,[prevCount%2]:prevData[prevCount%2]+1}
+                })
+                return prevCount+1
+            })
+
+
+        },5000)
+        return ()=>clearInterval(interval)
+    },[])
+
     return <Box 
     onMouseEnter={()=>{
         setVideoHover(true)
@@ -81,9 +102,14 @@ export default function StreamView({id}:{id:number}){
             
             </Box>
         </Box>
-        <iframe src={video.videoStreamUrl} 
-        
+        <iframe key={`t0${renderTrigger[0]}`} src={video.videoStreamUrl} 
+                onLoad={()=>{
+                    setZIndex((prevData)=>{
+                        return {1:0,0:1}
+                    })
+                }}
         style={{
+        zIndex:zIndex[0],
         width: `${videoWidth}px`, // 設定為全寬
         height: `${videoHeight}px`, // 根據螢幕高度調整
         transform: `scale(${videoScale})`, // 放大 1.5 倍
@@ -91,9 +117,31 @@ export default function StreamView({id}:{id:number}){
         border: "solid 1px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
         pointerEvents:'none',
+        position:'absolute'
     }}
 
      allow="autoplay; fullscreen" ></iframe>
+
+<iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
+        onLoad={()=>{
+            setZIndex((prevData)=>{
+                return {0:1,1:0}
+            })
+        }}
+        style={{
+        zIndex:zIndex[1],
+        width: `${videoWidth}px`, // 設定為全寬
+        height: `${videoHeight}px`, // 根據螢幕高度調整
+        transform: `scale(${videoScale})`, // 放大 1.5 倍
+        transformOrigin: "center center", // 以中心點放大
+        border: "solid 1px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+        pointerEvents:'none',
+        position:'absolute'
+    }}
+
+     allow="autoplay; fullscreen" ></iframe>
+
      </Box>
 }
 

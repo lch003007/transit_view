@@ -86,8 +86,6 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
                     }
                         
                 })
-                console.log(path)
-                console.log(updateData)
                     post(path,updateData)
                     callback();
                 }

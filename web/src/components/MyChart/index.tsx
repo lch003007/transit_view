@@ -22,22 +22,8 @@ import {
     Legend
   );
   
-  export default function MyChart({labels,datasets}:any) {
-    const data = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [
-        {
-          label: 'Sales for 2023 (M)',
-          data: [3, 2, 2, 1, 5, 4],
-          fill: false,
-          backgroundColor: 'rgb(75, 192, 192)',
-          borderColor: 'rgba(75, 192, 192, 0.2)',
-          tension: 0.5, // 增加曲線效果
-        },
-      ],
-    };
-  
-    // 明確類型定義
+  export default function MyChart({labels,datasets,ref}:any) {
+
     const options: ChartOptions<'line'> = {
       responsive: true,
       plugins: {
@@ -53,7 +39,7 @@ import {
   
     return (
       <>
-        <Line options={options} data={{labels:labels,datasets:datasets}} />
+        <Line style={{width:'100%',height:'100%'}} ref={ref} options={options} data={{labels:labels,datasets:datasets}} />
       </>
     );
   }

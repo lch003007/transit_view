@@ -2,6 +2,7 @@
 import { DbTable } from '@/components/Table/dbTable';
 import { Tabs, Tab, Box, Typography,Paper } from '@mui/material';
 import { useState } from 'react';
+import User from './user';
 
 export default function EquipmentManagement(){
     const [activeTab, setActiveTab] = useState(0);
@@ -11,6 +12,18 @@ export default function EquipmentManagement(){
     };
 
     const tabDatas = [
+        {
+            label: '帳號',
+            path: 'auth',
+            title: {
+                id: 'id',
+                username: '帳號',
+                password: '密碼',
+                auth:'權限'
+            },
+            notNull: ['username', 'password'],
+            hide: ['id'],
+        },
         {
             label: '旅行時間',
             path: 'travelTime',
@@ -85,7 +98,8 @@ export default function EquipmentManagement(){
             notNull: ['VDID', 'LinkID', 'location'],
             hide: ['id'],
             number:['LaneNum','ActualLaneNum']
-        }
+        },
+
     ];
     return (
         <Box sx={{ width: '100%' }}>
@@ -152,7 +166,8 @@ export default function EquipmentManagement(){
                         hidden={activeTab !== index}
                         id={`tabpanel-${tabData.path}`}
                     >
-                        {activeTab === index && (
+                        {index==0?<User title={tabData.title} hide={tabData.hide}/>:
+                        <>                        {activeTab === index && (
                             <DbTable
                                 path={tabData.path}
                                 title={tabData.title}
@@ -162,7 +177,9 @@ export default function EquipmentManagement(){
                                 numberData={tabData.number??[]} 
                                 booleanData={tabData.boolean??[]}
                             />
-                        )}
+                        )}</>
+                        }
+
                     </div>
                 ))}
             </Box>

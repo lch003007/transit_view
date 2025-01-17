@@ -5,20 +5,15 @@ import { Box } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import {ButtonGroup,Button} from "@mui/material";
+import { LoadingContext } from "@/contexts/Loading";
 
-
-export default function ItemPicker({title,path,itemKey}:{title:string,path:string,itemKey:string}){
-    const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
-    const [videos,setVideos] = useState([{id:'',location:''}])
-    const {post} = api
+export default function ItemPicker({title,itemKey,itemOptions}:{title:string,itemKey:string,itemOptions:any}){ 
+  const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
     const vidtoLengthOption = [1,4,9,16]
 
     useEffect(()=>{
       setItemLength(1)
       setItemsSelected({})
-      post(path).then(function(data){
-        setVideos(data)
-      })
     },[])
     
     return (
@@ -58,9 +53,9 @@ export default function ItemPicker({title,path,itemKey}:{title:string,path:strin
 
         {/* 表格內容 */}
         <TableBody>
-          {videos.map((video,index) => (
+          {itemOptions.map((item:any,index:number) => (
             <TableRow
-              key={`videoRow${video.id}`}
+              key={`itemRow${item.id}`}
               sx={{
                 "&:not(:last-child)": {
                   borderBottom: "1px solid #f0f0f0", // 白線分隔
@@ -69,9 +64,9 @@ export default function ItemPicker({title,path,itemKey}:{title:string,path:strin
             >
               <TableCell draggable
               onDragStart={(e) => {
-                e.dataTransfer.setData("item", JSON.stringify(video));
+                e.dataTransfer.setData("item", JSON.stringify(item));
               }} sx={{ fontSize: "16px", padding: "15px",cursor: "pointer",color:itemsSelected[index]?'#84C1FF':'white' }}>
-                {video[itemKey as keyof typeof video]}
+                {item[itemKey as keyof typeof item]}
                 </TableCell>
             </TableRow>
           ))}

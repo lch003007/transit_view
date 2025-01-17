@@ -12,7 +12,7 @@ export default function MyCheckBoxGroup({ labels, state, setState, values }: MyC
   const [checkBox, setCheckBox] = useState(labels?.[0]);
 
   return (
-    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap",flexDirection:'column',background:'white' }}>
       {labels?.map((label, index) => (
         <label
           key={index}

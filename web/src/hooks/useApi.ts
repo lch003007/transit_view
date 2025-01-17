@@ -1,9 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useContext } from "react";
-import { LoadingContext } from "@/contexts/Loading";
 
 function useApi(){
-    const {setLoading} = useContext(LoadingContext)
+
     const baseUrl = "http://localhost:3000"; // 定義你的 baseUrl
     const get = async (path: string, config: AxiosRequestConfig = {})=>{
         try {
@@ -21,9 +19,7 @@ function useApi(){
         config: AxiosRequestConfig = {},
     )=> {
         try {
-            setLoading(true)
             const response: AxiosResponse = await axios.post(`${baseUrl}/${path}`, data, config);
-            setLoading(false)
             return response.data;
         } catch (error) {
             console.error("POST request error:", error);

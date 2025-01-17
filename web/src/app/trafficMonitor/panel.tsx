@@ -34,7 +34,6 @@ function Panel() {
             return height>width/3?width/3:height
     }
     const getVdTraffic = ()=>{
-        console.log(456)
         const intervalTime = Math.max(...Array.from({ length: 4 }, (_, index) =>{
             return Number(panelData[`intervalTime${index}`])
         }))*Number(panelData['ActualLaneNum'])
@@ -47,13 +46,11 @@ function Panel() {
               DataCollectTime: 'desc'
             }
           }).then((data)=>{
-            console.log(789)
             setPanelData((prevData)=>{
                 Array.from({ length: 4 }, (_, index) =>{
                     prevData[`flowValue${index}`] = data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)
                     prevData[`rateValue${index}`] = String(Math.round(data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)/Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])))
                 })
-                console.log(prevData)
                 return prevData
             })
 
@@ -137,7 +134,6 @@ function Panel() {
             onDrop={(e)=>{
                 e.preventDefault()
                 const roadData = JSON.parse(e.dataTransfer.getData('item'))
-                console.log(roadData)
                 post('vd/panel',{roadId:roadData.id}).then(data=>{
                     setDefaultData(data)
                     setPanelData(()=>{

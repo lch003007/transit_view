@@ -6,10 +6,11 @@ import { HttpClientModule } from "src/core/httpClient/index.module";
 import { MyLoggerModule } from "src/core/myLogger/index.module";
 import { Client } from "@googlemaps/google-maps-services-js";
 import { TravelTimeService } from "./index.service";
+import { TravelTimeApi } from "./index.api";
 
 @Module({
     imports:[PrismaModule,HttpClientModule,MyLoggerModule],
-    providers:[TravelTimeRepository,TravelTimeService,{
+    providers:[TravelTimeRepository,TravelTimeApi,TravelTimeService,{
         provide:Client,
         useValue:new Client()
     }],
