@@ -65,7 +65,7 @@ export class TravelTimeService{
         const noTravelTimeSegments = travelSegments.filter(item=>!item.travelTime)
         if(noTravelTimeSegments.length==0)
         {
-            return travelSegments.map(item=>({name:item.name,travelTime:item.travelTime}))
+            return travelSegments.map(item=>({id:item.id,name:item.name,travelTime:item.travelTime}))
         }
             
         for(const travelSegment of noTravelTimeSegments){
@@ -81,7 +81,7 @@ export class TravelTimeService{
         }
 
         const newResult = await this.repository.getTravelSegment()
-        return newResult.map(item=>({name:item.name,travelTime:item.travelTime}))
+        return newResult.map(item=>({id:item.id,name:item.name,travelTime:item.travelTime}))
 
 
     }

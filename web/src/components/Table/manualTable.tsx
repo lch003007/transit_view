@@ -25,7 +25,7 @@ import { Form } from "./Form";
 
 
 // ManualTable 組件
-export function ManualTable({ data=[],title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[] }: { data?: any[],title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData?:string[] }) {
+export function ManualTable({ data=[],title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[],addFunction,editFunction,deleteFunction }: { data?: any[],title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData?:string[],addFunction?:any,editFunction?:any,deleteFunction?:any, }) {
   const {openDialog,closeDialog,keys} = useContext(DialogContext)
   const {addKey,deleteKey,editKey} = keys
   // const addKey = 'formAdd'
@@ -33,7 +33,7 @@ export function ManualTable({ data=[],title={},filterValues={},totalFilter=false
   // const editKey = 'formEdit'
   const [keyword,setKeyword] = useState('')
   const [page, setPage] = useState(0); // 當前頁數
-  const [rowsPerPage, setRowsPerPage] = useState(5); // 每頁顯示的行數
+  const [rowsPerPage, setRowsPerPage] = useState(20); // 每頁顯示的行數
   const [sortInfo,setSortInfo] = useState({key:'',order:1})
   const [sortHover,setSortHover] = useState('')
   const [editData,setEditData] = useState<Record<string,string>>({})
@@ -105,7 +105,13 @@ export function ManualTable({ data=[],title={},filterValues={},totalFilter=false
       borderRadius: "10px"
     }}>
       {form?
-    <Box sx={{display:'flex',justifyContent:'end',paddingTop:'10px',paddingRight:'10px'}}><IconButton onClick={()=>{openDialog(addKey)}}><Add/></IconButton>
+    <Box sx={{display:'flex',justifyContent:'end',paddingTop:'10px',paddingRight:'10px'}}><IconButton onClick={()=>{
+      if(addFunction)
+        addFunction()
+      else{
+        openDialog(addKey)
+      }
+      }}><Add/></IconButton>
       </Box>:<></>  
     }
       
@@ -168,12 +174,22 @@ export function ManualTable({ data=[],title={},filterValues={},totalFilter=false
                         return <TableCell key={key=`tableCell${index}`}>{item[key]}</TableCell>
                     })}
                     {form?<TableCell><IconButton  onClick={()=>{
-                      setDeleteData(item)
-                      openDialog(deleteKey)}
+                      if(deleteFunction){
+                        deleteFunction(item)
+                      }else{
+                        setDeleteData(item)
+                        openDialog(deleteKey)
+                      }
+}
                     }><Delete/></IconButton><IconButton  onClick={()=>{
+                      if(editFunction){
+                        editFunction(item)
+                      }else{
+                        setEditData(item)
+                        openDialog(editKey)
+                      }
                       
-                      setEditData(item)
-                      openDialog(editKey)
+
                       
                       }}><Edit/></IconButton></TableCell>:<></>}
                 </TableRow>
@@ -189,18 +205,11 @@ export function ManualTable({ data=[],title={},filterValues={},totalFilter=false
         onPageChange={handleChangePage} // 處理頁數更改
         rowsPerPage={rowsPerPage} // 每頁行數
         onRowsPerPageChange={handleChangeRowsPerPage} // 處理每頁行數更改
-        rowsPerPageOptions={[5, 10, 15]} // 可選每頁行數
+        rowsPerPageOptions={[20, 30, 10000]} // 可選每頁行數
         labelRowsPerPage='每頁數量：'
       />
     </Paper>
-    {/* <Dialog
-      open={action['add']}
-      onClose={()=>{
-        setAction((prevData)=>({...prevData,add:false}))
-      }}
-    >
 
-    </Dialog> */}
   <MyDialog openKey={addKey}>
     <Form booleanData={booleanData} numberData={numberData} addKey={addKey} editKey={editKey} deleteKey={deleteKey} path={`${path}/insert`} hide={hide} type={addKey} title={title} notNull={notNull} />
   </MyDialog>

@@ -28,33 +28,70 @@ function formatDuration(seconds: number): string {
 }
 
 export default function TravelTimeForecast(){
+  const title = {
+    name:'路段',
+    travelTime:'旅行時間',
+    travelTimePredict1:'5分鐘後',
+    travelTimePredict2:'15分鐘後',
+    travelTimePredict3:'30分鐘後',
+    travelTimePredict4:'60分鐘後',
+  }
     const {post} = useApi()
   const [tableData,setTableData] = useState([])
+  const [groupData,setGroupData] = useState([])
   const [isLoading,setLoading] = useState(false)
     useEffect(()=>{
+      setLoading(true)
       post('travelTime/predict').then((data)=>{
-        setTableData(data)
+        setTableData(data.map((item:any)=>{
+          return {
+            name:item.name,
+            travelTime:formatDuration(item['travelTime']),
+            travelTimePredict1:formatDuration(item['travelTimePredict1']),
+            travelTimePredict2:formatDuration(item['travelTimePredict2']),
+            travelTimePredict3:formatDuration(item['travelTimePredict3']),
+            travelTimePredict4:formatDuration(item['travelTimePredict4']),
+          }
+        }))
+        post('travelTime/group').then((data2)=>{
+          const updateGroupData:any = []
+          data2.map((item:any)=>{       
+            let groupTravelTime = [0,0,0,0,0]
+            console.log(123)
+            console.log(item['segments'].split(','))
+            for(const segmentId of item['segments'].split(',')){
+              const id = Number(segmentId)==0?1:Number(segmentId)
+              Array.from({length:5},(_,index)=>{
+                if(index==0){
+                  groupTravelTime[index]+= data.find((item1:any)=>item1.travelSegmentId==id)['travelTime']
+                }else{
+                  groupTravelTime[index]+= data.find((item1:any)=>item1.travelSegmentId==id)[`travelTimePredict${index}`]
+                }
+                
+            })
+              
+            }
+            console.log(456)
+            updateGroupData.push({
+              name:item.name,
+              travelTime:formatDuration(groupTravelTime[0]),
+              travelTimePredict1:formatDuration(groupTravelTime[1]),
+              travelTimePredict2:formatDuration(groupTravelTime[2]),
+              travelTimePredict3:formatDuration(groupTravelTime[3]),
+              travelTimePredict4:formatDuration(groupTravelTime[4]),
+            })
+          })
+          setGroupData(updateGroupData)
+          setLoading(false)
+        })
+
+        setLoading(false)
     })
     },[])
 
     // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
-    return <Wrapper isLoading={isLoading}><ManualTable data={tableData.map(item=>{
-      const name = item['name']
-      return {
-        name:name,
-        travelTime:formatDuration(item['travelTime']),
-        travelTimePredict1:formatDuration(item['travelTimePredict1']),
-        travelTimePredict2:formatDuration(item['travelTimePredict2']),
-        travelTimePredict3:formatDuration(item['travelTimePredict3']),
-        travelTimePredict4:formatDuration(item['travelTimePredict4']),
-      }
-    })}  title={
-      {
-      name:'路段',
-      travelTime:'旅行時間',
-      travelTimePredict1:'5分鐘後',
-      travelTimePredict2:'15分鐘後',
-      travelTimePredict3:'30分鐘後',
-      travelTimePredict4:'60分鐘後',
-    }} /></Wrapper>
+    return <Wrapper isLoading={isLoading}>
+      <ManualTable data={groupData}  title={title} />
+      {/* <ManualTable data={tableData}  title={title} /> */}
+      </Wrapper>
   }

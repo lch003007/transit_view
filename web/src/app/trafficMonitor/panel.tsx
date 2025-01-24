@@ -11,17 +11,16 @@ import useApi from "@/hooks/useApi";
 import EditIcon from '@mui/icons-material/Edit';
 import MyDialog from "@/components/MyDialog";
 import { Form } from "@/components/Table/Form";
+import { Javascript } from "@mui/icons-material";
 
 
 
-function Panel() {
-    const {itemsSelected,setItemsSelected,itemLength} = useContext(ItemPickerContext)
+function Panel({id}:{id:number}) {
+    const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
     const {keys,openDialog} = useContext(DialogContext)
     const {panelKey} = keys
     const {post} = useApi()
     const [defaultData,setDefaultData] = useState({})
-    // const width = parentWidth / 5;
-    // const height = parentHeight / 7;
     const panelRef = useRef(false)
     const [width,setWidth] = useState(0)
     const [height,setHeight] = useState(0)
@@ -41,7 +40,7 @@ function Panel() {
             where: {
               roadId: panelData.roadId
             },
-            take: intervalTime,
+            take: intervalTime?intervalTime:0,
             orderBy: {
               DataCollectTime: 'desc'
             }
@@ -76,6 +75,25 @@ function Panel() {
 
         }
     },[itemLength])
+    useEffect(()=>{
+        if(Object.keys(itemsSelected).includes(String(id)))
+        {
+            const roadData = itemsSelected[id]
+            post('vd/panel',{roadId:roadData.id}).then(data=>{
+                setDefaultData(data)
+                setPanelData(()=>{
+                    const prevData = {...roadData,...data}
+                    Array.from({ length: 4 }, (_, index) => {
+                        prevData[`rateValue${index}`] = null
+                        prevData[`flowValue${index}`] = null
+                    })
+                    return prevData
+                }
+                    )
+            panelRef.current = true
+                })
+        }
+    },[Object.keys(itemsSelected).includes(String(id))])
 
     const MyTable = styled('table')({
         width: '100%',
@@ -133,20 +151,19 @@ function Panel() {
             onDragOver={(e)=>{e.preventDefault()}}
             onDrop={(e)=>{
                 e.preventDefault()
-                const roadData = JSON.parse(e.dataTransfer.getData('item'))
-                post('vd/panel',{roadId:roadData.id}).then(data=>{
-                    setDefaultData(data)
-                    setPanelData(()=>{
-                        const prevData = {...roadData,...data}
-                        Array.from({ length: 4 }, (_, index) => {
-                            prevData[`rateValue${index}`] = null
-                            prevData[`flowValue${index}`] = null
-                        })
-                        return prevData
-                    }
-                        )
-                panelRef.current = true
+                const group = e.dataTransfer.getData('group')
+                if(group){
+                    const groupData = JSON.parse(group)
+                    setItemLength(groupData.itemLength)
+                    setItemsSelected(groupData.roadData)
+                    setGroup(groupData.groupId)
+                }
+                else{
+                    const roadData = JSON.parse(e.dataTransfer.getData('item'))
+                    setItemsSelected((prevData)=>{
+                        return {...prevData,[id]:roadData}
                     })
+                }
             }}
             sx={{width:'100%',height:'100%',border:'solid 1px white',display:'flex',justifyContent:'center',alignItems:'center',borderRadius: "5px",
                 boxShadow: "1px 4px 6px rgba(0, 0, 0, 0.5)"}}>
@@ -165,7 +182,13 @@ function Panel() {
                     <IconButton onClick={()=>{openDialog(panelKey)}}>
                     <EditIcon sx={{fontSize:height,color:'white'}} />
                     </IconButton>
-                    <IconButton onClick={()=>{setPanelData({})}}>
+                    <IconButton onClick={()=>{
+                        setPanelData({})
+                        setItemsSelected((prevData)=>{
+                            delete prevData[id]
+                            return prevData
+                        })
+                        }}>
                     <CloseIcon  sx={{fontSize:height,color:'white'}}/>
                     </IconButton>
                     </Box>

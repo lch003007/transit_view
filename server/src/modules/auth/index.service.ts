@@ -2,11 +2,21 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { userRepository } from "./index.repository";
 import * as bcrypt from 'bcrypt';
+import { OnModuleInit } from "@nestjs/common";
 
 @Injectable()
-export class AuthService{
+export class AuthService implements OnModuleInit{
     private asccessTokens:any[] = []
     constructor(private jwt:JwtService,private repository:userRepository){}
+    async onModuleInit() {
+        const users = await this.repository.getUser()
+        if(users.length==0)
+            await this.register({
+        username:'admin',
+        password:'admin',
+        auth:'liveVideo,trafficMonitor,travelTime,roadEvents,signalControl,dataAnalysis,trafficForecast,travelTimeForecast,equipmentManagement'
+    })
+    }
 
     async login(user: any) {
         const payload = { username: user.username };
@@ -44,7 +54,6 @@ export class AuthService{
         };
     }
     
-
     async register(props:any){
         props['password'] = await bcrypt.hash(props['password'],10)
         return await this.repository.insertUser(props)

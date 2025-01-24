@@ -14,10 +14,10 @@ import {Chart as ChartJS} from 'chart.js'
 
 
 
-function VdChart({endDate,amount = 100}:any) {
+function VdChart({endDate,amount = 100,id}:any) {
     const [activeTab, setActiveTab] = useState(0);
     const [checkBox,setCheckBox] = useState('intervalTime0')
-    const {itemsSelected,setItemsSelected,itemLength} = useContext(ItemPickerContext)
+    const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
     const {post} = useApi()
     const panelRef = useRef(false)
     const [width,setWidth] = useState(0)
@@ -26,9 +26,11 @@ function VdChart({endDate,amount = 100}:any) {
     const boxRef = useRef<HTMLDivElement>(null)
     const chartRefRate = useRef<ChartJS | null>(null)
     const chartRefVolume = useRef<ChartJS | null>(null)
+
     const handleTabChange = (event:any, newValue:any) => {
         setActiveTab(newValue);
     };
+    
     const getVdTraffic = ()=>{
         const intervalTime = Math.max(...Array.from({ length: 4 }, (_, index) =>{
             return Number(panelData[`intervalTime${index}`])
@@ -40,7 +42,7 @@ function VdChart({endDate,amount = 100}:any) {
                 lte:endDate
               }
             },
-            take: intervalTime,
+            take: intervalTime?intervalTime:0,
             orderBy: {
               DataCollectTime: 'desc'
             }
@@ -80,6 +82,22 @@ function VdChart({endDate,amount = 100}:any) {
       chartRefVolume.current?.resize();
       chartRefVolume.current?.update();
     },[width,height])
+
+    useEffect(()=>{
+      if(Object.keys(itemsSelected).includes(String(id)))
+      {
+          const roadData = itemsSelected[id]
+          post("vd/panel", { roadId: roadData.id }).then((data) => {
+            setPanelData(() => {
+              const prevData = { ...roadData, ...data };
+              prevData["speeds"] = [];
+              prevData["volumes"] = [];
+              return prevData;
+            });
+            panelRef.current = true;
+          });
+      }
+  },[Object.keys(itemsSelected).includes(String(id))])
     
     return (
         <Box height={"100%"} width={"100%"} ref={boxRef}>
@@ -90,16 +108,20 @@ function VdChart({endDate,amount = 100}:any) {
               }}
               onDrop={(e) => {
                 e.preventDefault();
+                const group = e.dataTransfer.getData('group')
+                if(group){
+                  const groupData = JSON.parse(group)
+                  setItemLength(groupData.itemLength)
+                  setItemsSelected(groupData.roadData)
+                  setGroup(groupData.groupId)
+              }else{
                 const roadData = JSON.parse(e.dataTransfer.getData("item"));
-                post("vd/panel", { roadId: roadData.id }).then((data) => {
-                  setPanelData(() => {
-                    const prevData = { ...roadData, ...data };
-                    prevData["speeds"] = [];
-                    prevData["volumes"] = [];
-                    return prevData;
-                  });
-                  panelRef.current = true;
-                });
+                                    setItemsSelected((prevData)=>{
+                        return {...prevData,[id]:roadData}
+                    })
+              }
+                
+
               }}
               sx={{
                 width: "100%",
@@ -134,6 +156,18 @@ function VdChart({endDate,amount = 100}:any) {
               >
                                 <Box sx={{ display: "flex", justifyContent: "end",position:'relative' }}>
                   <Box sx={{position:'absolute',zIndex:'100'}}>
+                  {panelData.location}
+                  <IconButton onClick={()=>{
+                    setItemsSelected((prevData)=>{
+                      delete prevData[id]
+                      return prevData
+                    })
+                    setPanelData({})
+                        setItemsSelected((prevData)=>{
+                            delete prevData[id]
+                            return prevData
+                        })
+                  }}><CloseIcon/></IconButton>
                   <MyCheckBoxGroup
                     state={checkBox}
                     setState={setCheckBox}

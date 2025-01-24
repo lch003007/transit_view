@@ -7,6 +7,10 @@ import { PrismaService,
     panelCreateManyData,
     panelDeleteManyArgs,
     panelFindManyArgs,
+    panelGroupCreateManyData,
+    panelGroupDeleteManyArgs,
+    panelGroupFindManyArgs,
+    panelGroupUpdateManyArgs,
     panelUpdateManyArgs,
     roadCreateManyData,
     roadDeleteManyArgs,
@@ -75,6 +79,22 @@ export class VdRepository{
 
     async deletePanel(props:panelDeleteManyArgs){
         return this.prisma.executeOperation(props,'panel','deleteMany')
+    }
+
+    async getPanelGroup(props:panelGroupFindManyArgs={}){
+        return this.prisma.executeOperation(props,'panelGroup','findMany')
+    }
+
+    async insertPanelGroup(data:panelGroupCreateManyData,skipDuplicates:boolean=false){
+        return this.prisma.executeOperation({data:data,skipDuplicates:skipDuplicates},'panelGroup','createMany')
+    }
+
+    async updatePanelGroup(props:panelGroupUpdateManyArgs){
+        return this.prisma.executeOperation(props,'panelGroup','updateMany')
+    }
+
+    async deletePanelGroup(props:panelGroupDeleteManyArgs){
+        return this.prisma.executeOperation(props,'panelGroup','deleteMany')
     }
 
 

@@ -8,23 +8,29 @@ const ItemPickerContext = createContext<{
     setItemLength:Dispatch<SetStateAction<number>>;
     itemsSelected:any
     setItemsSelected:Dispatch<SetStateAction<itemsSelected>>
+    group:number,
+    setGroup:Dispatch<SetStateAction<number>>
   }>({
     itemLength:1,
     setItemLength:() => {},
     itemsSelected:{},
-    setItemsSelected:()=>{}
+    setItemsSelected:()=>{},
+    group:0,
+    setGroup:()=>{}
   });
 
 function ItemPickerProvider({children}:any){
     const [itemLength,setItemLength] = useState(1)
     const [itemsSelected,setItemsSelected] = useState<itemsSelected>({})
-
+    const [group,setGroup] = useState(0)
     return <ItemPickerContext.Provider
     value={{
         itemLength,
         setItemLength,
         itemsSelected,
-        setItemsSelected
+        setItemsSelected,
+        group,
+        setGroup
     }}
     >
         {children}

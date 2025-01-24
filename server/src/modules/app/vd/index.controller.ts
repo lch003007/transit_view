@@ -1,6 +1,6 @@
 import { Controller, Get,Post,Body } from '@nestjs/common';
 import { VdRepository } from './index.repository';
-import { deviceCreateManyData, deviceDeleteManyArgs, deviceFindManyArgs, deviceUpdateManyArgs, panelCreateManyData, panelDeleteManyArgs, panelFindManyArgs, panelUpdateManyArgs, roadCreateManyData, roadDeleteManyArgs, roadFindManyArgs, roadUpdateManyArgs, trafficFindManyArgs } from 'src/modules/prisma/prisma.service';
+import { deviceCreateManyData, deviceDeleteManyArgs, deviceFindManyArgs, deviceUpdateManyArgs, panelCreateManyData, panelDeleteManyArgs, panelFindManyArgs, panelGroupCreateManyData, panelGroupDeleteManyArgs, panelGroupFindManyArgs, panelGroupUpdateManyArgs, panelUpdateManyArgs, roadCreateManyData, roadDeleteManyArgs, roadFindManyArgs, roadUpdateManyArgs, trafficFindManyArgs } from 'src/modules/prisma/prisma.service';
 import { VdService } from './index.service';
 
 @Controller('vd')
@@ -73,4 +73,25 @@ export class VdController {
   async getTraffic(@Body()props:trafficFindManyArgs){
     return await this.repository.getTraffic(props)
   }
+
+  @Post('panelGroup')
+  async getPanelGroup(@Body()props?:panelGroupFindManyArgs){
+    return this.repository.getPanelGroup(props)
+  }
+
+  @Post('panelGroup/insert')
+  async insertPanelGroup(@Body()props:panelGroupCreateManyData){
+    return this.repository.insertPanelGroup(props)
+  }
+
+  @Post('panelGroup/update')
+  async updatePanelGroup(@Body()props:panelGroupUpdateManyArgs){
+    return this.repository.updatePanelGroup(props)
+  }
+
+  @Post('panelGroup/delete')
+  async deletePanelGroup(@Body()props:panelGroupDeleteManyArgs){
+    return this.repository.deletePanelGroup(props)
+  }
+
 }

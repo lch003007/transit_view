@@ -6,16 +6,15 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import {ButtonGroup,Button} from "@mui/material";
 import { LoadingContext } from "@/contexts/Loading";
+import { MyButton } from "../MyInput";
 
-export default function ItemPicker({title,itemKey,itemOptions}:{title:string,itemKey:string,itemOptions:any}){ 
+export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],groupItemKey,idKey}:{title:string,itemKey:string,itemOptions:any,itemGroups?:any,groupItemKey?:string,idKey:string}){ 
   const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
     const vidtoLengthOption = [1,4,9,16]
-
     useEffect(()=>{
       setItemLength(1)
       setItemsSelected({})
     },[])
-    
     return (
 <Box sx={{
     background:'#3A566C',
@@ -28,6 +27,7 @@ export default function ItemPicker({title,itemKey,itemOptions}:{title:string,ite
         height:'100%',
         maxWidth:'250px'
     }}>
+        <Box sx={{display:'flex',justifyContent:'center'}}>
         <ButtonGroup  variant="outlined" aria-label="Basic button group">
             {vidtoLengthOption.map(item=>{
                 return <Button sx={{background:item==itemLength?'#84C1FF':'white'}} onClick={()=>{
@@ -42,6 +42,7 @@ export default function ItemPicker({title,itemKey,itemOptions}:{title:string,ite
                 }} key={`buttonGroup${item}`}><Box>{item}</Box></Button>
             })}
         </ButtonGroup>
+        </Box>
     <TableContainer component={Paper}>
       <Table sx={{borderCollapse: "separate", borderSpacing: 0,background:'#3A566C'}}>
         {/* 表頭 */}
@@ -53,6 +54,37 @@ export default function ItemPicker({title,itemKey,itemOptions}:{title:string,ite
 
         {/* 表格內容 */}
         <TableBody>
+          {itemGroups.map((item:any,index:number)=>{
+            return<TableRow
+            key={`itemRow${item.id}`}
+            sx={{
+              "&:not(:last-child)": {
+                borderBottom: "1px solid #f0f0f0", // 白線分隔
+              },
+            }}
+          >
+            <TableCell draggable
+            onDragStart={(e) => {
+              const groupData:any = {
+                name:item.name,
+                itemLength:item.itemLength,
+                roadData:{},
+                groupId:item.id
+              }
+              item[idKey].split(',').map((roadId:any,index:any)=>{
+                if(roadId!=0)
+                {
+                  groupData['roadData'][index] = itemOptions.filter((option:any)=>option.id==roadId)[0]
+                }
+              })
+              e.dataTransfer.setData("group", JSON.stringify(groupData));
+
+            }} sx={{ fontSize: "16px", padding: "15px",cursor: "pointer",color:'white' }}>
+              {item[groupItemKey as keyof typeof item]}
+              </TableCell>
+          </TableRow>
+          })}
+          
           {itemOptions.map((item:any,index:number) => (
             <TableRow
               key={`itemRow${item.id}`}

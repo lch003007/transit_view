@@ -5,7 +5,7 @@ import { Box,IconButton } from "@mui/material"
 import { ItemPickerContext } from "@/contexts/ItemPickerContext"
 import CancelIcon from '@mui/icons-material/Cancel';
 export default function StreamView({id}:{id:number}){
-    const {itemsSelected,setItemsSelected,itemLength} = useContext(ItemPickerContext)
+    const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
     const [videoHover,setVideoHover] = useState(false)
     const videoWidth = 310
     const videoHeight = 212
@@ -42,9 +42,7 @@ export default function StreamView({id}:{id:number}){
                 })
                 return prevCount+1
             })
-
-
-        },5000)
+        },7000)
         return ()=>clearInterval(interval)
     },[])
 
@@ -58,10 +56,19 @@ export default function StreamView({id}:{id:number}){
     onDragOver={(e)=>{e.preventDefault()}}
     onDrop={(e)=>{
         e.preventDefault()
+        const group = e.dataTransfer.getData('group')
+        if(group){
+            const groupData = JSON.parse(group)
+            setItemLength(groupData.itemLength)
+            setItemsSelected(groupData.roadData)
+            setGroup(groupData.groupId)
+        }else{
+            setItemsSelected((prevData)=>{
+                return {...prevData,[id]:JSON.parse(e.dataTransfer.getData('item'))}
+            })
+        }
         // setVideo(JSON.parse(e.dataTransfer.getData('video')))
-        setItemsSelected((prevData)=>{
-            return {...prevData,[id]:JSON.parse(e.dataTransfer.getData('item'))}
-        })
+
     }}
     
     ref={boxRef}
@@ -122,7 +129,7 @@ export default function StreamView({id}:{id:number}){
 
      allow="autoplay; fullscreen" ></iframe>
 
-<iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
+{/* <iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
         onLoad={()=>{
             setZIndex((prevData)=>{
                 return {0:1,1:0}
@@ -140,7 +147,7 @@ export default function StreamView({id}:{id:number}){
         position:'absolute'
     }}
 
-     allow="autoplay; fullscreen" ></iframe>
+     allow="autoplay; fullscreen" ></iframe> */}
 
      </Box>
 }

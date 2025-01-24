@@ -21,7 +21,7 @@ import MyDialog from "@/components/MyDialog";
 import { Form } from "@/components/Table/Form";
 import useApi from "@/hooks/useApi";
 import { routes } from "@/routes";
-import { MyButton, MySelect, MyText } from "@/components/MyInput";
+import { MyButton,MyText } from "@/components/MyInput";
 
 
 // 定義數據的類型
@@ -168,7 +168,7 @@ export default function User({title={},filterValues={},totalFilter=false,form=fa
         onPageChange={handleChangePage} // 處理頁數更改
         rowsPerPage={rowsPerPage} // 每頁行數
         onRowsPerPageChange={handleChangeRowsPerPage} // 處理每頁行數更改
-        rowsPerPageOptions={[5, 10, 15]} // 可選每頁行數
+        rowsPerPageOptions={[20, 30, 10000]} // 可選每頁行數
         labelRowsPerPage='每頁數量：'
       />
     </Paper>

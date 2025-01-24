@@ -18,7 +18,15 @@ export default function RoadEvents(){
     }
 
     return <Box>
-        
-        <DbTable path='trafficStatus' title={title} totalFilter={true} />
+        <DbTable config={{
+            where:{
+                eventTime:{
+                    gte:new Date(new Date().setHours(0, 0, 0, 0))
+                },
+                srcdetail:{
+                    contains:'公路局東區養護工程分局'
+                }
+            }
+        }} path='trafficStatus' title={title} totalFilter={true} />
         </Box>
 }

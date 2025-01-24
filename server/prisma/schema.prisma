@@ -42,6 +42,22 @@ model Device{
   @@map("device")
 }
 
+model CctvGroup{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255) @default("新增群組")
+  cctvIds String @db.VarChar(255)
+  itemLength Int
+  @@map("cctvGroup")
+}
+
+model PanelGroup{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255) @default("新增群組")
+  roadIds String @db.VarChar(255)
+  itemLength Int
+  @@map("panelGroup")
+}
+
 model Road{
   id Int @id @default(autoincrement())
   VDID String @db.VarChar(255)
@@ -141,6 +157,12 @@ model TravelTimeRecord {
   createdAt     DateTime? @default(now()) // 記錄建立時間
 
   @@map("travel_time_record") // 修改資料表名稱為 travel_segments
+}
+
+model TravelGroup {
+  id            Int      @id @default(autoincrement()) // KEY AI
+  name          String   @db.VarChar(255)
+  segments      String   @db.VarChar(255)
 }
 
 model Panel{

@@ -1,19 +1,13 @@
 'use client'
 import { DbTable } from '@/components/Table/dbTable';
-import { Tabs, Tab, Box, Typography,Paper } from '@mui/material';
-import { useState } from 'react';
 import User from './user';
+import MyTab from '@/components/MyTab';
 
 export default function EquipmentManagement(){
-    const [activeTab, setActiveTab] = useState(0);
-
-    const handleTabChange = (event:any, newValue:any) => {
-        setActiveTab(newValue);
-    };
-
     const tabDatas = [
         {
             label: '帳號',
+            key:'auth',
             path: 'auth',
             title: {
                 id: 'id',
@@ -23,9 +17,11 @@ export default function EquipmentManagement(){
             },
             notNull: ['username', 'password'],
             hide: ['id'],
+            component:<></>
         },
         {
             label: '旅行時間',
+            key:'travelTime',
             path: 'travelTime',
             title: {
                 id: 'id',
@@ -40,10 +36,12 @@ export default function EquipmentManagement(){
             },
             notNull: ['name', 'startX', 'startY', 'endX', 'endY', 'direction'],
             hide: ['id'],
-            number:['startX','startY','endX','endY','middleX','middleY',]
+            number:['startX','startY','endX','endY','middleX','middleY',],
+            component:<></>
         },
         {
             label: '監控攝影機',
+            key: 'cctv',
             path: 'cctv',
             title: {
                 id: 'id',
@@ -59,9 +57,11 @@ export default function EquipmentManagement(){
             notNull: ['cctvId'],
             hide: ['id'],
             number:['positionLat','positionLon'],
+            component:<></>
         },
         {
             label: '設備',
+            key:'device',
             path: 'vd/device',
             title: {
                 id: 'id',
@@ -80,10 +80,12 @@ export default function EquipmentManagement(){
             notNull: ['VDID'],
             hide: ['id'],
             number:['VDType','LocationType','DetectionType','PositionLon','PositionLat','RoadClass'],
-            boolean:['BiDirectional']
+            boolean:['BiDirectional'],
+            component:<></>
         },
         {
             label: '道路',
+            key:'road',
             path: 'vd/road',
             title: {
                 id: 'id',
@@ -97,78 +99,15 @@ export default function EquipmentManagement(){
             },
             notNull: ['VDID', 'LinkID', 'location'],
             hide: ['id'],
-            number:['LaneNum','ActualLaneNum']
+            number:['LaneNum','ActualLaneNum'],
+            component:<></>
         },
-
+        
     ];
-    return (
-        <Box sx={{ width: '100%' }}>
-            <Paper
-                sx={{
-                    width: '100%',
-                    position: 'relative',
-                    zIndex: 2,
-                    backgroundColor: '#ffffff',
-                    borderBottom: '1px solid #ddd',
-                }}
-            >
-                <Tabs
-                    value={activeTab}
-                    onChange={handleTabChange}
-                    aria-label="tab navigation"
-                    variant="scrollable"
-                    scrollButtons="auto"
-                    indicatorColor="primary"
-                    textColor="primary"
-                    sx={{
-                        backgroundColor: '#ffffff',
-                        '.MuiTab-root': {
-                            fontWeight: 'bold',
-                            textTransform: 'none',
-                            padding: '12px 16px',
-                            minWidth: '100px',
-                            backgroundColor: '#ffffff',
-                            borderRadius: '8px 8px 0 0', // 標籤的圓角設計
-                            ':hover': {
-                                backgroundColor: '#f0f0f0',
-                            },
-                        },
-                        '.MuiTab-root.Mui-selected': {
-                            color: 'primary.main',
-                            backgroundColor: '#f5f5f5',
-                        },
-                        '.MuiTabs-indicator': {
-                            display: 'none', // 隱藏原生指示器，讓背景色代替
-                        },
-                        borderRadius:'10px'
-                    }}
-                >
-                    {tabDatas.map((tabData, index) => (
-                        <Tab key={index} label={tabData.label} id={`tab-${tabData.path}`}  />
-                    ))}
-                </Tabs>
-            </Paper>
-            <Box
-                sx={{
-                    position: 'relative',
-                    zIndex: 1,
-                    width: '100%',
-                    backgroundColor: '#f9f9f9',
-                    marginTop: '-8px', // 讓內容區域和標籤部分重疊
-                    padding: '16px',
-                    borderRadius: '8px',
-                }}
-            >
-                {tabDatas.map((tabData, index) => (
-                    <div
-                        key={`tab-content-${index}`}
-                        role="tabpanel"
-                        hidden={activeTab !== index}
-                        id={`tabpanel-${tabData.path}`}
-                    >
-                        {index==0?<User title={tabData.title} hide={tabData.hide}/>:
-                        <>                        {activeTab === index && (
-                            <DbTable
+    tabDatas.map((tabData:any,index:any)=>{
+        tabDatas[index]['component'] = index==0?
+        <User title={tabData.title} hide={tabData.hide}/>:
+<DbTable
                                 path={tabData.path}
                                 title={tabData.title}
                                 form={true}
@@ -177,12 +116,8 @@ export default function EquipmentManagement(){
                                 numberData={tabData.number??[]} 
                                 booleanData={tabData.boolean??[]}
                             />
-                        )}</>
-                        }
-
-                    </div>
-                ))}
-            </Box>
-        </Box>
+    })
+    return (
+        <MyTab tabDatas={tabDatas}/>
     );
 }

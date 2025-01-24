@@ -1,7 +1,7 @@
 import { Controller, Get,Post,Body } from '@nestjs/common';
 import { TravelTimeRepository} from './index.repository';
 import { TravelTimeService } from './index.service';
-import { travelSegmentCreateManyData, travelSegmentDeleteManyArgs, travelSegmentUpdateManyArgs } from 'src/modules/prisma/prisma.service';
+import { travelGroupCreateManyData, travelGroupDeleteManyArgs, travelGroupUpdateManyArgs, travelSegmentCreateManyData, travelSegmentDeleteManyArgs, travelSegmentUpdateManyArgs } from 'src/modules/prisma/prisma.service';
 
 @Controller('travelTime')
 export class TravelTimeController {
@@ -31,6 +31,7 @@ export class TravelTimeController {
     return this.repository.updateTravelSegment(props)
   }
 
+  
   @Post('delete')
   async deleteTravelTime(@Body()props:travelSegmentDeleteManyArgs){
     return this.repository.deleteTravelSegment(props)
@@ -40,4 +41,25 @@ export class TravelTimeController {
   async getVolumePredict(@Body()props:any){
     return this.service.getVolumePredict(props.date)
   }
+
+  @Post('group')
+  async getGroup(){
+    return await this.repository.getTravelGroup()
+  }
+
+  @Post('group/insert')
+  async insertGroup(@Body()props:travelGroupCreateManyData){
+    return this.repository.insertTravelGroup(props)
+  }
+
+  @Post('group/update')
+  async updateGroup(@Body()props:travelGroupUpdateManyArgs){
+    return this.repository.updateTravelGroup(props)
+  }
+
+  @Post('group/delete')
+  async deleteGroup(@Body()props:travelGroupDeleteManyArgs){
+    return this.repository.deleteTravelGroup(props)
+  }
+
 }

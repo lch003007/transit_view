@@ -81,3 +81,18 @@ export type userCreateManyData = Prisma.UserCreateInput[]
 export type userFindManyArgs = Prisma.UserFindManyArgs
 export type userUpdateManyArgs = Prisma.UserUpdateManyArgs
 export type userDeleteManyArgs = Prisma.UserDeleteManyArgs
+
+export type panelGroupCreateManyData = Prisma.PanelGroupCreateInput[]
+export type panelGroupFindManyArgs = Prisma.PanelGroupFindManyArgs
+export type panelGroupUpdateManyArgs = Prisma.PanelGroupUpdateManyArgs
+export type panelGroupDeleteManyArgs = Prisma.PanelGroupDeleteManyArgs
+
+export type cctvGroupCreateManyData = Prisma.CctvGroupCreateInput[]
+export type cctvGroupFindManyArgs = Prisma.CctvGroupFindManyArgs
+export type cctvGroupUpdateManyArgs = Prisma.CctvGroupUpdateManyArgs
+export type cctvGroupDeleteManyArgs = Prisma.CctvGroupDeleteManyArgs
+
+export type travelGroupCreateManyData = Prisma.TravelGroupCreateInput[]
+export type travelGroupFindManyArgs = Prisma.TravelGroupFindManyArgs
+export type travelGroupUpdateManyArgs = Prisma.TravelGroupUpdateManyArgs
+export type travelGroupDeleteManyArgs = Prisma.TravelGroupDeleteManyArgs

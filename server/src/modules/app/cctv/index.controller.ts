@@ -1,6 +1,6 @@
 import { Body, Controller,Post } from "@nestjs/common";
 import { CctvRepository } from "./index.repository";
-import { cctvCreateManyData, cctvDeleteManyArgs, cctvFindManyArgs, cctvUpdateManyArgs } from "src/modules/prisma/prisma.service";
+import { cctvCreateManyData, cctvDeleteManyArgs, cctvFindManyArgs, cctvGroupCreateManyData, cctvGroupDeleteManyArgs, cctvGroupFindManyArgs, cctvGroupUpdateManyArgs, cctvUpdateManyArgs } from "src/modules/prisma/prisma.service";
 
 @Controller('cctv')
 export class CctvController{
@@ -25,6 +25,27 @@ export class CctvController{
     @Post('delete')
     async deleteCctv(@Body()props:cctvDeleteManyArgs){
         return this.repository.deleteCctv(props)
+    }
+
+    @Post('group')
+    async getCctvGroup(@Body()props?:cctvGroupFindManyArgs){
+        return this.repository.getCctvGroup(props)
+    }
+
+    @Post('group/insert')
+    async insertCctvGroup(@Body()props:cctvGroupCreateManyData){
+        console.log(props)
+        return this.repository.insertCctvGroup(props)
+    }
+    
+    @Post('group/update')
+    async updateCctvGroup(@Body()props:cctvGroupUpdateManyArgs){
+        return this.repository.updateCctvGroup(props)
+    }
+
+    @Post('group/delete')
+    async deleteCctvGroup(@Body()props:cctvGroupDeleteManyArgs){
+        return this.repository.deleteCctvGroup(props)
     }
 
 }

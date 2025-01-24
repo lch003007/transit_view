@@ -31,7 +31,13 @@ function DialogProvider({children}:any){
             addKey:'formAdd',
             deleteKey:'formDelete',
             editKey:'formEdit',
-            panelKey:'panelEdit'
+            panelKey:'panelEdit',
+            panelGroupKey:'panelGroup',
+            cctvGroupKey:'cctvGroup',
+            panelDeleteKey:'deletePanelGroup',
+            addTravelTimeKey:'addTravelTimeKey',
+            editTravelTimeKey:'editTravelTimeKey',
+            deleteTravelTimeKey:'deleteTravelTimeKey'
         }
     }}
     >

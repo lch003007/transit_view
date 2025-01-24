@@ -94,6 +94,7 @@ export class VdTask implements OnModuleInit{
         const insertDevices = trafficDatas.filter(trafficData=>!devices.find(item=>item.VDID==trafficData.VDID))
         const insertRoads = trafficDatas.filter(trafficData=>!roads.find(item=>item.LinkID==trafficData.LinkID))
         if(insertDevices.length>0){
+            // console.log('insertDevice')
             const insertVDIDs = insertDevices.map(item=>({VDID:item.VDID}))
             await this.repository.insertDevice(insertVDIDs)
             for(const insertVDID of insertVDIDs){
@@ -101,8 +102,8 @@ export class VdTask implements OnModuleInit{
             }
         }   
         if(insertRoads.length>0){
-            devices = await this.repository.getDevice()
-            const insertLinkIds = insertDevices.map(item=>({LinkID:item.LinkId,VDID:item.VDID,location:'請修改此位置'}))
+            // devices = await this.repository.getDevice()
+            const insertLinkIds = insertDevices.map(item=>({LinkID:item.LinkId,VDID:item.VDID,location:'請修改此位置'})).filter(item=>item.LinkID)
             await this.repository.insertRoad(insertLinkIds)
             for(const insertLinkId of insertLinkIds){
                 await this.logger.info(`insert LinkId ${insertLinkId}`)
