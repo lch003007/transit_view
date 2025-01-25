@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function useApi(){
 
-    const baseUrl = "http://localhost:3000"; // 定義你的 baseUrl
+    const baseUrl = `${window.location.hostname}:3000`; // 定義你的 baseUrl
     const get = async (path: string, config: AxiosRequestConfig = {})=>{
         try {
             const response: AxiosResponse = await axios.get(`${baseUrl}/${path}`, config);

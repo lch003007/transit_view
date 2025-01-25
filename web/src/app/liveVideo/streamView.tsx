@@ -42,7 +42,7 @@ export default function StreamView({id}:{id:number}){
                 })
                 return prevCount+1
             })
-        },7000)
+        },10000)
         return ()=>clearInterval(interval)
     },[])
 
@@ -129,7 +129,7 @@ export default function StreamView({id}:{id:number}){
 
      allow="autoplay; fullscreen" ></iframe>
 
-{/* <iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
+<iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
         onLoad={()=>{
             setZIndex((prevData)=>{
                 return {0:1,1:0}
@@ -147,7 +147,7 @@ export default function StreamView({id}:{id:number}){
         position:'absolute'
     }}
 
-     allow="autoplay; fullscreen" ></iframe> */}
+     allow="autoplay; fullscreen" ></iframe>
 
      </Box>
 }

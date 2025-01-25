@@ -64,3 +64,8 @@ a {
 ::-webkit-scrollbar-corner {
   background: transparent; /* 右下角空白 */
 }
+
+
+nextjs-portal {
+  display: none;
+}
