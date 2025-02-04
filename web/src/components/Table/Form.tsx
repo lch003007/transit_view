@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { DialogContext } from "@/contexts/DialogContext";
 import useApi from "@/hooks/useApi";
 
-export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',hide=[],path,numberData=[],booleanData=[],reload=true,callbackFunction=(state:any)=>{}}:any){
+export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',hide=[],path,numberData=[],booleanData=[],reload=true,callbackFunction=()=>{}}:any){
     const {post} = useApi()
     const {closeDialog,keys} = useContext(DialogContext)
     const {addKey,deleteKey,editKey,panelKey} = keys

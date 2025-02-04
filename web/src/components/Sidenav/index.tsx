@@ -4,8 +4,6 @@ import { useContext } from "react"
 import { LayoutContext } from "@/contexts/LayoutContext"
 import Link from "next/link"
 import {routes} from '@/routes'
-import { MyButton } from "../MyInput"
-import { deleteCookie } from "cookies-next"
 import { getCookie } from "cookies-next";
 
 export default function Sidenav(){

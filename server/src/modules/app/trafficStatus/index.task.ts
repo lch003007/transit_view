@@ -16,21 +16,29 @@ export class TrafficStatusTask implements OnModuleInit{
     async getTrafficStatus(){
         const dbTrafficStatus = await this.repository.getTrafficStatus()
         const result = await this.http.get(trafficStatusUrl)
-        let trafficStatusDatas = result.map(item=>({
-            srcdetail: item['srcdetail'],
-            eventTime: new Date(`${item.happendate}T${item.happentime.slice(0,8)}`),
-            roadtype: item['roadtype'],
-            UID: item['UID'],
-            road: item['road'],
-            areaNm: item['areaNm'],
-            y1: Number(item['y1']),
-            modDttm: new Date(item['modDttm'].replace(' ','T')),
-            x1: Number(item['x1']),
-            comment:item['comment']
-        }))
+        let trafficStatusDatas = []
+        result.map(item=>{
+
+            if(!item.happendate||!item.happentime)
+                return 
+
+            trafficStatusDatas.push({
+                srcdetail: item['srcdetail'],
+                eventTime: new Date(`${item.happendate}T${item.happentime.slice(0,8)}`),
+                roadtype: item['roadtype'],
+                UID: item['UID'],
+                road: item['road'],
+                areaNm: item['areaNm'],
+                y1: Number(item['y1']),
+                modDttm: new Date(item['modDttm'].replace(' ','T')),
+                x1: Number(item['x1']),
+                comment:item['comment']
+            })
+        })
         trafficStatusDatas = trafficStatusDatas.filter(trafficStatusData=>!dbTrafficStatus.find(item=>item.UID==trafficStatusData.UID))
         await this.repository.insertTrafficStatus(trafficStatusDatas)
         this.logger.info('update traffic status data successful!')
+        
         //初始化警廣資料,存到資料庫
     }
 }

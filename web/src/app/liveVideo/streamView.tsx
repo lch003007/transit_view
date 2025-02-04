@@ -1,5 +1,4 @@
 'use client'
-import api from "@/api"
 import { useEffect, useRef, useState,useContext } from "react"
 import { Box,IconButton } from "@mui/material"
 import { ItemPickerContext } from "@/contexts/ItemPickerContext"
@@ -11,11 +10,11 @@ export default function StreamView({id}:{id:number}){
     const videoHeight = 212
     const [videoScale,setVideoScale] = useState(1)
     const boxRef = useRef<HTMLDivElement>(null)
+    const [videoUrl,setVideoUrl] = useState<any>(null)
     const video = {videoStreamUrl:'',location:'',...itemsSelected[id]}
     const [renderTrigger, setRenderTrigger] = useState({0:0,1:0})
     const [count,setCount] = useState(0)
     const [zIndex,setZIndex] = useState({0:0,1:0})
-    console.log(renderTrigger)
     useEffect(()=>{
         if(boxRef.current)
             {
@@ -30,22 +29,35 @@ export default function StreamView({id}:{id:number}){
             }
         // setVideo(fakeLive()[0])
     },[itemLength])
+    useEffect(()=>{
+        setVideoUrl(video.videoStreamUrl)
+    },[video.videoStreamUrl])
     // console.log(renderTrigger)
     // console.log(count)
     useEffect(()=>{
         const interval = setInterval(()=>{
             // console.log(count)
-            setCount((prevCount)=>{
-                setRenderTrigger((prevData:any)=>{
-                    // console.log({...prevData,[prevCount%2]:prevData[prevCount%2]+1})
-                    return {...prevData,[prevCount%2]:prevData[prevCount%2]+1}
-                })
-                return prevCount+1
+            // setCount((prevCount)=>{
+            //     setRenderTrigger((prevData:any)=>{
+            //         // console.log({...prevData,[prevCount%2]:prevData[prevCount%2]+1})
+            //         return {...prevData,[prevCount%2]:prevData[prevCount%2]+1}
+            //     })
+            //     return prevCount+1
+            // })
+            setVideoUrl((prevData:any)=>{
+                
+                
+                const baseUrl = prevData.includes('?')?
+                prevData.split('?')[0]:prevData
+                console.log(baseUrl)
+                // console.log(`${baseUrl}?ts=${new Date().getTime()}}`)
+                // if(prevData.includes('?'))
+                return `${baseUrl}?ts=${new Date().getTime()}}`
+                
             })
         },10000)
         return ()=>clearInterval(interval)
     },[])
-
     return <Box 
     onMouseEnter={()=>{
         setVideoHover(true)
@@ -109,9 +121,11 @@ export default function StreamView({id}:{id:number}){
             
             </Box>
         </Box>
-        <iframe key={`t0${renderTrigger[0]}`} src={video.videoStreamUrl} 
+        {/* <img src="https://cctv-ss04.thb.gov.tw:443/T61-164K+960?ts=0.006168844781625493" id="nowcctv_CCTV-23-0610-164-001thb_cctv_c"></img> */}
+        <img src={videoUrl!=null?videoUrl:video.videoStreamUrl}/>
+        {/* <iframe key={`t0${renderTrigger[0]}`} src={video.videoStreamUrl} loading="lazy"  
                 onLoad={()=>{
-                    setZIndex((prevData)=>{
+                    setZIndex(()=>{
                         return {1:0,0:1}
                     })
                 }}
@@ -127,11 +141,11 @@ export default function StreamView({id}:{id:number}){
         position:'absolute'
     }}
 
-     allow="autoplay; fullscreen" ></iframe>
+     allow="autoplay; fullscreen" ></iframe> */}
 
-<iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
+{/* <iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
         onLoad={()=>{
-            setZIndex((prevData)=>{
+            setZIndex(()=>{
                 return {0:1,1:0}
             })
         }}
@@ -147,7 +161,7 @@ export default function StreamView({id}:{id:number}){
         position:'absolute'
     }}
 
-     allow="autoplay; fullscreen" ></iframe>
+     allow="autoplay; fullscreen" ></iframe> */}
 
      </Box>
 }

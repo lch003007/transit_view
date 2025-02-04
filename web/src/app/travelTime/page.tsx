@@ -1,14 +1,12 @@
 'use client'
 import useApi from "@/hooks/useApi";
 import { ManualTable } from "@/components/Table/manualTable"
-import { DbTable } from "@/components/Table/dbTable";
 import { useEffect, useState,useContext } from "react";
-import Loading from "../loading";
-import { LoadingContext } from "@/contexts/Loading";
+
 import Wrapper from "@/components/Wrapper";
 import MyDialog from "@/components/MyDialog";
 import { DialogContext } from "@/contexts/DialogContext";
-import {Delete,Add,Edit} from '@mui/icons-material';
+import {Add} from '@mui/icons-material';
 import { MyText,MySelect, MyButton } from "@/components/MyInput";
 import MyBox from "@/components/MyBox";
 import { IconButton } from "@mui/material";

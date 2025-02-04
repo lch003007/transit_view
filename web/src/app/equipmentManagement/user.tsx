@@ -22,16 +22,16 @@ import { Form } from "@/components/Table/Form";
 import useApi from "@/hooks/useApi";
 import { routes } from "@/routes";
 import { MyButton,MyText } from "@/components/MyInput";
-
+import { Auth } from "@/types";
 
 // 定義數據的類型
 
 
 
 // ManualTable 組件
-export default function User({title={},filterValues={},totalFilter=false,form=false,hide=[],notNull=[],path='',numberData=[],booleanData=[] }: { title?:any,filterValues?:any,totalFilter?:boolean,form?:boolean,hide?:string[],notNull?:string[],path?:string,numberData?:string[],booleanData?:string[] }) {
+export default function User({title={},hide=[],notNull=[],path='' }: { title?:Record<string,string>,hide?:string[],notNull?:string[],path?:string }) {
     const {post} = useApi()
-    const {openDialog,closeDialog,keys} = useContext(DialogContext)
+    const {openDialog,keys} = useContext(DialogContext)
   const {addKey,deleteKey,editKey} = keys
   const [page, setPage] = useState(0); // 當前頁數
   const [rowsPerPage, setRowsPerPage] = useState(5); // 每頁顯示的行數
@@ -42,7 +42,7 @@ export default function User({title={},filterValues={},totalFilter=false,form=fa
   const [data,setData] = useState([])
     useEffect(()=>{
         post('auth').then((dbData)=>{
-            setData(dbData.map((item:any)=>{
+            setData(dbData.map((item:Auth)=>{
                 return {...item,password:'********'}
             }))
         })
@@ -69,11 +69,10 @@ export default function User({title={},filterValues={},totalFilter=false,form=fa
   }
   
   const currentData = filteredData.map(item=>{
-    const newItem:any = {}
+    const newItem:Record<string,string> = {}
     Object.keys(title).map(key=>{
         newItem[key] = item[key]
     })
-    // console.log(newItem)
     return newItem
   }).slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
@@ -192,21 +191,28 @@ function AddUser(){
 
 }
 
+interface AddState{
+    username:string,
+    password:string,
+    auth:string
+}
+
 function UserForm({state,setState,path,type,originalState,id,usernameDisabled=false}:any){
     const {post} = useApi()
+    console.log({state,setState,path,type,originalState,id,usernameDisabled})
     return <Box sx={{marginX:'10px',marginBottom:'5px',display:'flex',flexDirection:'column',gap:'10px'}}>
         帳號:<MyText disabled={usernameDisabled} value={state['username']} onChange={(e)=>{
-            setState((prevData:any)=>{
+            setState((prevData:AddState)=>{
                 return {...prevData,username:e.target.value}
             })
         }} />
         密碼:<MyText type="password" value={state['password']} onChange={(e)=>{
-            setState((prevData:any)=>{
+            setState((prevData:AddState)=>{
                 return {...prevData,password:e.target.value}
             })
         }} />
-        權限:<AuthSelect state={state['auth']} setState={(data:any)=>{
-        setState((prevData:any)=>{
+        權限:<AuthSelect state={state['auth']} setState={(data:string)=>{
+        setState((prevData:AddState)=>{
             return {...prevData,auth:data}
         })
     }}  />
@@ -230,7 +236,6 @@ function postFormat(data:any,type:string,originalData?:any,id?:number){
             if(data[key]!=originalData[key])
                 editData[key] = data[key]
         })
-        console.log(editData)
         return {
             where:{
                 id:id

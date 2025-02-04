@@ -1,5 +1,5 @@
 'use client'
-import { Tabs, Tab, Box, Typography,Paper } from '@mui/material';
+import { Tabs, Tab, Box, Paper } from '@mui/material';
 import { useState } from 'react';
 
 export default function MyTab({tabDatas,backgroundColor='#ffffff'}:any){

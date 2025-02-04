@@ -1,14 +1,14 @@
 'use client';
 import { useState } from "react";
 
-interface MyCheckBoxProps {
+interface MyCheckBoxProps<T extends string = string> {
   labels?: string[]; // 顯示的標籤
-  state: string; // 當前選中的值
-  setState: (value: string) => void; // 更新選中狀態的函數
-  values: string[]; // 對應的值
+  state: T; // 當前選中的值
+  setState: (value: T) => void; // 更新選中狀態的函數
+  values: T[]; // 對應的值
 }
 
-export default function MyCheckBoxGroup({ labels, state, setState, values }: MyCheckBoxProps) {
+export default function MyCheckBoxGroup<T extends string = string>({ labels, setState, values }: MyCheckBoxProps<T>) {
   const [checkBox, setCheckBox] = useState(labels?.[0]);
 
   return (

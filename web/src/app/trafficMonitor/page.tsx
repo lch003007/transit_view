@@ -18,7 +18,7 @@ export default function TrafficMonitor(){
     const {sortRoad} = useSort()
     const [groupData,setGroupData] = useState<any>([])
     const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
-    const {openDialog,closeDialog,keys} = useContext(DialogContext)
+    const {openDialog,keys} = useContext(DialogContext)
     const [editGroupName,setEditGroupName] = useState("")
     const {panelGroupKey,panelDeleteKey} = keys
     const {post} = useApi()

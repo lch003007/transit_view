@@ -17,9 +17,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import {Delete,Add,Edit} from '@mui/icons-material';
 import { DialogContext } from "@/contexts/DialogContext";
 import MyDialog from "../MyDialog";
-import { AddForm } from "./addForm";
-import { EditForm } from "./editForm";
-import { DeleteForm } from "./deleteForm";
 import { Form } from "./Form";
 // 定義數據的類型
 

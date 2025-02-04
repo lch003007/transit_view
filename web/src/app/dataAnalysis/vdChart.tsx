@@ -7,33 +7,63 @@ import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import useApi from "@/hooks/useApi";
 import { MyCheckBoxGroup } from "@/components/MyInput";
 import MyChart from "@/components/MyChart";
-import { light } from "@mui/material/styles/createPalette";
-import { Tabs, Tab, Box, Typography,Paper } from '@mui/material';
+import { Tabs, Tab, Box, Paper } from '@mui/material';
 import {Chart as ChartJS} from 'chart.js'
+import { Dayjs } from "dayjs";
+import { PanelData,IntervalKeys,VdTraffic } from "@/types";
+import React from "react";
 
 
 
 
-function VdChart({endDate,amount = 100,id}:any) {
+function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:number}) {
     const [activeTab, setActiveTab] = useState(0);
-    const [checkBox,setCheckBox] = useState('intervalTime0')
+    const [checkBox,setCheckBox] = useState<IntervalKeys>('intervalTime0')
     const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
     const {post} = useApi()
     const panelRef = useRef(false)
     const [width,setWidth] = useState(0)
     const [height,setHeight] = useState(0)
-    const [panelData,setPanelData] = useState<Record<string,any>>({})
+    const initPanelData = {
+      id: 0,
+      VDID: "",
+      LinkID: "",
+      location: "",
+      Bearing: "",
+      RoadDirection: "",
+      LaneNum: 0,
+      ActualLaneNum: 0,
+      roadId: 0,
+      intervalTime0: 0,
+      flowGate0: 0,
+      rateGate0: 0,
+      intervalTime1: 0,
+      flowGate1: 0,
+      rateGate1: 0,
+      intervalTime2: 0,
+      flowGate2: 0,
+      rateGate2: 0,
+      intervalTime3: 0,
+      flowGate3: 0,
+      rateGate3: 0,
+      lineAlert: false,
+      alert: false,
+      speeds: [],
+      volumes: [],
+    }
+    const [panelData,setPanelData] = useState<PanelData>(initPanelData)
     const boxRef = useRef<HTMLDivElement>(null)
     const chartRefRate = useRef<ChartJS | null>(null)
     const chartRefVolume = useRef<ChartJS | null>(null)
 
-    const handleTabChange = (event:any, newValue:any) => {
+    const handleTabChange = (event:React.SyntheticEvent, newValue:number) => {
         setActiveTab(newValue);
     };
     
     const getVdTraffic = ()=>{
         const intervalTime = Math.max(...Array.from({ length: 4 }, (_, index) =>{
-            return Number(panelData[`intervalTime${index}`])
+            const intervalKey = `intervalTime${index}` as IntervalKeys
+            return Number(panelData[intervalKey])
         }))*Number(panelData['ActualLaneNum'])+(amount*Number(panelData['ActualLaneNum']))
         post('vd/traffic',{
             where: {
@@ -48,8 +78,8 @@ function VdChart({endDate,amount = 100,id}:any) {
             }
           }).then((data)=>{
             setPanelData((prevData)=>{
-                prevData['speeds'] = data.map((item:any)=>item.Speed)
-                prevData['volumes'] = data.map((item:any)=>item.Volume)
+                prevData['speeds'] = data.map((item:VdTraffic)=>item.Speed)
+                prevData['volumes'] = data.map((item:VdTraffic)=>item.Volume)
                 return prevData
             })
 
@@ -101,7 +131,7 @@ function VdChart({endDate,amount = 100,id}:any) {
     
     return (
         <Box height={"100%"} width={"100%"} ref={boxRef}>
-          {Object.keys(panelData).length === 0 ? (
+          {panelData['id'] === 0 ? (
             <Box
               onDragOver={(e) => {
                 e.preventDefault();
@@ -162,20 +192,22 @@ function VdChart({endDate,amount = 100,id}:any) {
                       delete prevData[id]
                       return prevData
                     })
-                    setPanelData({})
+                    setPanelData(initPanelData)
                         setItemsSelected((prevData)=>{
                             delete prevData[id]
                             return prevData
                         })
                   }}><CloseIcon/></IconButton>
-                  <MyCheckBoxGroup
+                  <MyCheckBoxGroup<IntervalKeys>
                     state={checkBox}
                     setState={setCheckBox}
                     labels={Array.from({ length: 4 }, (_, index) => {
-                      return `${panelData[`intervalTime${index}`]}分鐘`;
+                      const intervalKey = `intervalTime${index}` as IntervalKeys
+                      return `${panelData[intervalKey]}分鐘`;
                     })}
                     values={Array.from({ length: 4 }, (_, index) => {
-                      return `intervalTime${index}`;
+                      const intervalKey = `intervalTime${index}` as IntervalKeys
+                      return intervalKey;
                     })}
                   />
                   </Box>

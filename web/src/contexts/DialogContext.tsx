@@ -1,5 +1,5 @@
 'use client';
-import { useState,createContext,Dispatch,SetStateAction } from "react";
+import { useState,createContext } from "react";
 
 const DialogContext = createContext<{
     openDialog:any;

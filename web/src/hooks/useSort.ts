@@ -9,17 +9,20 @@ interface LocationItem {
   
       // 提取排序用的數值和字母
       const parseLocation = (location: string) => {
-        const match = location.match(/^(台|國道)?(\d+)([甲乙丙丁戊己庚辛]?)(線|號)?.*?(\d+)[kK]\+(\d+)/);
-        if (match) {
-          const [, prefix, number, letter, , kValue, meter] = match;
-          return {
-            prefix: prefix || '',
-            number: parseInt(number, 10),
-            letter: letter || '',
-            kValue: parseInt(kValue, 10),
-            meter: parseInt(meter, 10),
-          };
+        if(location){
+          const match = location.match(/^(台|國道)?(\d+)([甲乙丙丁戊己庚辛]?)(線|號)?.*?(\d+)[kK]\+(\d+)/);
+          if (match) {
+            const [, prefix, number, letter, , kValue, meter] = match;
+            return {
+              prefix: prefix || '',
+              number: parseInt(number, 10),
+              letter: letter || '',
+              kValue: parseInt(kValue, 10),
+              meter: parseInt(meter, 10),
+            };
+          }
         }
+
         // 不符合格式時，記錄下來
         invalidLocations.push(location);
         return {

@@ -1,7 +1,7 @@
 'use client'
 import { MyDatePicker } from "@/components/MyInput"
 import { useEffect, useState } from "react"
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Box,Grid } from "@mui/material";
 import ItemPicker from "@/components/ItemPicker";
 import { useContext } from "react";
@@ -17,17 +17,24 @@ import GroupBar from "@/components/ItemPicker/groupBar";
 import MyDialog from "@/components/MyDialog";
 import { useSort } from "@/hooks/useSort";
 
+interface GroupData{
+    id:number,
+    name:string,
+    roadIds:string,
+    itemLength:number
+}
+
 export default function DataAnalysis(){
     const {sortRoad} = useSort()
     const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
-    const [groupData,setGroupData] = useState<any>([])
-    const {openDialog,closeDialog,keys} = useContext(DialogContext)
+    const [groupData,setGroupData] = useState<GroupData[]>([])
+    const {openDialog,keys} = useContext(DialogContext)
     const [editGroupName,setEditGroupName] = useState("")
     const {panelGroupKey,panelDeleteKey} = keys
     const {post} = useApi()
     const [state,setState] = useState([{}])
     const {isLoading,setLoading} = useContext(LoadingContext)
-    const [endDate,setEndDate] = useState(dayjs())
+    const [endDate,setEndDate] = useState<Dayjs>(dayjs())
 
     useEffect(()=>{
         setLoading(true)
@@ -41,7 +48,7 @@ export default function DataAnalysis(){
     },[])
 
     const saveAs = ()=>{
-        const roadIds:any = []
+        const roadIds:Number[] = []
         Array.from({length:itemLength},(_,index)=>{
             if(itemsSelected[index])
                 roadIds.push(itemsSelected[index]['id'])
@@ -80,7 +87,8 @@ export default function DataAnalysis(){
                     saveAs()
                 }else{
                     openDialog(panelGroupKey)
-                    setEditGroupName(groupData.find((item:any)=>item.id==group).name)
+                    const editGroupName = groupData.find((item:GroupData)=>item.id==group)?.name
+                    setEditGroupName(editGroupName?editGroupName:'')
                 }
             }}/>
         </Box>

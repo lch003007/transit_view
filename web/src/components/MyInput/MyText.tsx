@@ -1,5 +1,4 @@
 'use client'
-import { ButtonHTMLAttributes } from "react"
 import { InputHTMLAttributes } from "react"
 
 interface MyTextProps extends InputHTMLAttributes<HTMLInputElement>{

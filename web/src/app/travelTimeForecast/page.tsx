@@ -1,6 +1,5 @@
 'use client'
 import { ManualTable } from "@/components/Table/manualTable"
-import { DbTable } from "@/components/Table/dbTable";
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi";
 import Wrapper from "@/components/Wrapper";
@@ -37,22 +36,22 @@ export default function TravelTimeForecast(){
     travelTimePredict4:'60分鐘後',
   }
     const {post} = useApi()
-  const [tableData,setTableData] = useState([])
+  // const [tableData,setTableData] = useState([])
   const [groupData,setGroupData] = useState([])
   const [isLoading,setLoading] = useState(false)
     useEffect(()=>{
       setLoading(true)
       post('travelTime/predict').then((data)=>{
-        setTableData(data.map((item:any)=>{
-          return {
-            name:item.name,
-            travelTime:formatDuration(item['travelTime']),
-            travelTimePredict1:formatDuration(item['travelTimePredict1']),
-            travelTimePredict2:formatDuration(item['travelTimePredict2']),
-            travelTimePredict3:formatDuration(item['travelTimePredict3']),
-            travelTimePredict4:formatDuration(item['travelTimePredict4']),
-          }
-        }))
+        // setTableData(data.map((item:any)=>{
+        //   return {
+        //     name:item.name,
+        //     travelTime:formatDuration(item['travelTime']),
+        //     travelTimePredict1:formatDuration(item['travelTimePredict1']),
+        //     travelTimePredict2:formatDuration(item['travelTimePredict2']),
+        //     travelTimePredict3:formatDuration(item['travelTimePredict3']),
+        //     travelTimePredict4:formatDuration(item['travelTimePredict4']),
+        //   }
+        // }))
         post('travelTime/group').then((data2)=>{
           const updateGroupData:any = []
           data2.map((item:any)=>{       
@@ -71,7 +70,7 @@ export default function TravelTimeForecast(){
             })
               
             }
-            console.log(456)
+            // console.log(456)
             updateGroupData.push({
               name:item.name,
               travelTime:formatDuration(groupTravelTime[0]),

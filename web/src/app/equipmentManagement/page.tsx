@@ -2,9 +2,22 @@
 import { DbTable } from '@/components/Table/dbTable';
 import User from './user';
 import MyTab from '@/components/MyTab';
+import React from 'react';
+
+interface TabData{
+    label: string,
+    key:string,
+    path: string,
+    title: Record<string,string>,
+    notNull?: string[],
+    hide?: string[],
+    number?:string[],
+    boolean?:string[],
+    component:React.ReactNode
+}
 
 export default function EquipmentManagement(){
-    const tabDatas = [
+    const tabDatas:TabData[] = [
         {
             label: '帳號',
             key:'auth',
@@ -104,7 +117,7 @@ export default function EquipmentManagement(){
         },
         
     ];
-    tabDatas.map((tabData:any,index:any)=>{
+    tabDatas.map((tabData:TabData,index:number)=>{
         tabDatas[index]['component'] = index==0?
         <User title={tabData.title} hide={tabData.hide}/>:
 <DbTable

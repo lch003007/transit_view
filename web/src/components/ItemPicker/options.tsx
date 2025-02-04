@@ -1,5 +1,5 @@
 'use client'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableRow, Paper } from "@mui/material";
 
 export default function Options({itemKey,itemOptions,itemsSelected}:any){
     return <TableContainer component={Paper}>

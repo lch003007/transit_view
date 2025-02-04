@@ -1,12 +1,9 @@
 'use client'
-import { useEffect, useState,useContext } from "react";
-import api from "@/api";
+import { useEffect, useContext } from "react";
 import { Box } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import {ButtonGroup,Button} from "@mui/material";
-import { LoadingContext } from "@/contexts/Loading";
-import { MyButton } from "../MyInput";
 
 export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],groupItemKey,idKey}:{title:string,itemKey:string,itemOptions:any,itemGroups?:any,groupItemKey?:string,idKey:string}){ 
   const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
@@ -54,7 +51,7 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
 
         {/* 表格內容 */}
         <TableBody>
-          {itemGroups.map((item:any,index:number)=>{
+          {itemGroups.map((item:any)=>{
             return<TableRow
             key={`itemRow${item.id}`}
             sx={{

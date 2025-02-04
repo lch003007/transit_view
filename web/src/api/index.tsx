@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useContext } from "react";
-import { LoadingContext } from "@/contexts/Loading";
+
 const baseUrl = "http://localhost:3000"; // 定義你的 baseUrl
 
 // 定義 API 方法返回的泛型

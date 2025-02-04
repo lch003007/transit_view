@@ -27,7 +27,7 @@ export default function LiveVideo(){
     useEffect(()=>{
         setLoading(true)
         post('cctv').then(function(data){
-            console.log(sortRoad(data))
+            console.log(data)
             setState(sortRoad(data))
             setLoading(false)
         })

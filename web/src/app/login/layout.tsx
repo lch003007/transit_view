@@ -1,8 +1,6 @@
 import localFont from "next/font/local";
 import "../globals.css";
 // import Image from "next/image";
-import Contexts from "@/contexts";
-import Sidenav from "@/components/Sidenav";
 import Topbar from "@/components/Topbar";
 import PageTitle from "@/components/pageTitle";
 
