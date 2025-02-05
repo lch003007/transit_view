@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useState,useEffect } from "react";
+import React, { useContext, useState,useEffect, ReactNode } from "react";
 import {
   Table,
   TableBody,
@@ -22,7 +22,7 @@ import { Form } from "@/components/Table/Form";
 import useApi from "@/hooks/useApi";
 import { routes } from "@/routes";
 import { MyButton,MyText } from "@/components/MyInput";
-import { Auth } from "@/types";
+import { Auth, Routes } from "@/types";
 
 // 定義數據的類型
 
@@ -30,6 +30,7 @@ import { Auth } from "@/types";
 
 // ManualTable 組件
 export default function User({title={},hide=[],notNull=[],path='' }: { title?:Record<string,string>,hide?:string[],notNull?:string[],path?:string }) {
+    const initFormData = {id:0,username:'',password:'',auth:''}
     const {post} = useApi()
     const {openDialog,keys} = useContext(DialogContext)
   const {addKey,deleteKey,editKey} = keys
@@ -37,8 +38,8 @@ export default function User({title={},hide=[],notNull=[],path='' }: { title?:Re
   const [rowsPerPage, setRowsPerPage] = useState(5); // 每頁顯示的行數
   const [sortInfo,setSortInfo] = useState({key:'',order:1})
   const [sortHover,setSortHover] = useState('')
-  const [editData,setEditData] = useState<Record<string,string>>({})
-  const [deleteData,setDeleteData] = useState<Record<string,string>>({})
+  const [editData,setEditData] = useState<FormState>(initFormData)
+  const [deleteData,setDeleteData] = useState<FormState>(initFormData)
   const [data,setData] = useState([])
     useEffect(()=>{
         post('auth').then((dbData)=>{
@@ -68,14 +69,16 @@ export default function User({title={},hide=[],notNull=[],path='' }: { title?:Re
     }
   }
   
-  const currentData = filteredData.map(item=>{
-    const newItem:Record<string,string> = {}
+  const currentData:FormState[] = filteredData.map(item=>{
+    const newItem:FormState = {...initFormData}
     Object.keys(title).map(key=>{
-        newItem[key] = item[key]
+        const titleKey = key as keyof FormState
+        newItem[titleKey] = item[titleKey]
     })
+    console.log(newItem)
     return newItem
   }).slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-
+ 
   return (
     <>
     <Paper sx={{
@@ -139,11 +142,13 @@ export default function User({title={},hide=[],notNull=[],path='' }: { title?:Re
           </TableHead>
           <TableBody>
           {currentData.map((item,index)=>{
+            
                 return <TableRow key={`tableRow${index}`}>
                     {Object.keys(item).map((key,index)=>{
                                       if(hide.includes(key)||key=='auth')
                                         return <></>
-                        return <TableCell key={key=`tableCell${index}`}>{item[key]}</TableCell>
+                        const cellKey = key as keyof FormState
+                        return <TableCell key={key=`tableCell${index}`}>{item[cellKey]}</TableCell>
                     })}
                     <TableCell><IconButton  onClick={()=>{
                       setDeleteData(item)
@@ -191,28 +196,51 @@ function AddUser(){
 
 }
 
-interface AddState{
+interface UserFormProps{
+    id?:number,
+    originalState?:FormState,
+    path:string,
+    setState:React.Dispatch<React.SetStateAction<FormState>>,
+    state:FormState,
+    type:string,
+    usernameDisabled?:boolean
+}
+
+interface FormState{
+    id?:number,
     username:string,
     password:string,
     auth:string
 }
 
-function UserForm({state,setState,path,type,originalState,id,usernameDisabled=false}:any){
+interface FormAllState{
+    id:number,
+    username:string,
+    password:string,
+    auth:string
+}
+
+interface EditState{
+    username?:string,
+    password?:string,
+    auth?:string
+}
+
+function UserForm({state,setState,path,type,originalState,id,usernameDisabled=false}:UserFormProps){
     const {post} = useApi()
-    console.log({state,setState,path,type,originalState,id,usernameDisabled})
     return <Box sx={{marginX:'10px',marginBottom:'5px',display:'flex',flexDirection:'column',gap:'10px'}}>
         帳號:<MyText disabled={usernameDisabled} value={state['username']} onChange={(e)=>{
-            setState((prevData:AddState)=>{
+            setState((prevData:FormState)=>{
                 return {...prevData,username:e.target.value}
             })
         }} />
         密碼:<MyText type="password" value={state['password']} onChange={(e)=>{
-            setState((prevData:AddState)=>{
+            setState((prevData:FormState)=>{
                 return {...prevData,password:e.target.value}
             })
         }} />
         權限:<AuthSelect state={state['auth']} setState={(data:string)=>{
-        setState((prevData:AddState)=>{
+        setState((prevData:FormState)=>{
             return {...prevData,auth:data}
         })
     }}  />
@@ -220,7 +248,7 @@ function UserForm({state,setState,path,type,originalState,id,usernameDisabled=fa
 
             <MyButton onClick={()=>{
                 const config = postFormat(state,type,originalState,id)
-                post(path,config).then(()=>{
+                post<FormState | { where: { id: number|undefined }; data: EditState }>(path,config).then(()=>{
                     window.location.reload();
                 })
 
@@ -229,13 +257,13 @@ function UserForm({state,setState,path,type,originalState,id,usernameDisabled=fa
     </Box>
 }
 
-function postFormat(data:any,type:string,originalData?:any,id?:number){
-    if(type=='edit'){
-        const editData:any = {}
-        Object.keys(data).map((key:any)=>{
-            if(data[key]!=originalData[key])
-                editData[key] = data[key]
-        })
+function postFormat(data:FormState,type:string,originalData?:FormState,id?:number){
+    if(type=='edit'&&originalData){
+        const editData:EditState = {
+            username:data['username']!=originalData['username']?data['username']:undefined,
+            password:data['password']!=originalData['password']?data['password']:undefined,
+            auth:data['auth']!=originalData['auth']?data['auth']:undefined,
+        }
         return {
             where:{
                 id:id
@@ -246,23 +274,21 @@ function postFormat(data:any,type:string,originalData?:any,id?:number){
     return data
 }
 
-function EditUser({editData}:any){
+function EditUser({editData}:{editData:FormState}){
     const [state,setState] = useState({...editData,password:''})
-
+    
     return <UserForm originalState={{username:editData.username,password:'',auth:editData.auth}} id={editData.id} state={state} setState={setState} path='auth/update' type='edit' usernameDisabled={true} />
 }
 
-// function postInsert(path){
-//     const {post} = useApi()
-// }
+function AuthSelect({state,setState}:{state:string,setState:(data:string)=>void}){
+    const title:Record<string,ReactNode> = {}
 
-function AuthSelect({state,setState}:any){
-    const title:any = {}
+
     const values = state==""?[]:state.split(',')
-    routes.map((route:any)=>{
+    routes.map((route:Routes)=>{
         title[route.path] = <><input type="checkbox" />{route.name}</>
     })
-    return <ul>{routes.map((item:any)=>{
+    return <ul>{routes.map((item:Routes)=>{
         return <li style={{display:'flex'}}><input checked={values.includes(item.path)}
         onChange={(e)=>{
             if(e.target.checked)

@@ -10,8 +10,9 @@ import {
     Build,
     Logout
   } from "@mui/icons-material";
+  import { Routes } from "./types";
 
-export const routes = [
+export const routes:Routes[] = [
     {
       path: 'liveVideo',
       name: '即時影像', // 即時影像：代表實時的視頻監控功能

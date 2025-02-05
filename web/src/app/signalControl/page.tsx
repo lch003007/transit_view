@@ -15,7 +15,5 @@ export default function SignalControl(){
             前往
         </MyButton>
     </Link>
-
-
     </Box>
 }

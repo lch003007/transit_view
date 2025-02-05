@@ -12,9 +12,6 @@ export default function StreamView({id}:{id:number}){
     const boxRef = useRef<HTMLDivElement>(null)
     const [videoUrl,setVideoUrl] = useState<any>(null)
     const video = {videoStreamUrl:'',location:'',...itemsSelected[id]}
-    const [renderTrigger, setRenderTrigger] = useState({0:0,1:0})
-    const [count,setCount] = useState(0)
-    const [zIndex,setZIndex] = useState({0:0,1:0})
     useEffect(()=>{
         if(boxRef.current)
             {
@@ -32,26 +29,11 @@ export default function StreamView({id}:{id:number}){
     useEffect(()=>{
         setVideoUrl(video.videoStreamUrl)
     },[video.videoStreamUrl])
-    // console.log(renderTrigger)
-    // console.log(count)
     useEffect(()=>{
         const interval = setInterval(()=>{
-            // console.log(count)
-            // setCount((prevCount)=>{
-            //     setRenderTrigger((prevData:any)=>{
-            //         // console.log({...prevData,[prevCount%2]:prevData[prevCount%2]+1})
-            //         return {...prevData,[prevCount%2]:prevData[prevCount%2]+1}
-            //     })
-            //     return prevCount+1
-            // })
             setVideoUrl((prevData:any)=>{
-                
-                
                 const baseUrl = prevData.includes('?')?
                 prevData.split('?')[0]:prevData
-                console.log(baseUrl)
-                // console.log(`${baseUrl}?ts=${new Date().getTime()}}`)
-                // if(prevData.includes('?'))
                 return `${baseUrl}?ts=${new Date().getTime()}}`
                 
             })
@@ -121,48 +103,20 @@ export default function StreamView({id}:{id:number}){
             
             </Box>
         </Box>
-        {/* <img src="https://cctv-ss04.thb.gov.tw:443/T61-164K+960?ts=0.006168844781625493" id="nowcctv_CCTV-23-0610-164-001thb_cctv_c"></img> */}
-        <img src={videoUrl!=null?videoUrl:video.videoStreamUrl}/>
-        {/* <iframe key={`t0${renderTrigger[0]}`} src={video.videoStreamUrl} loading="lazy"  
-                onLoad={()=>{
-                    setZIndex(()=>{
-                        return {1:0,0:1}
-                    })
+        {video.videoStreamUrl==""?<></>:
+                <img 
+                src={videoUrl!=null?videoUrl:video.videoStreamUrl}
+                style={{
+                    width: `${videoWidth}px`,
+                    height: `${videoHeight}px`,
+                    transform: `scale(${videoScale})`,
+                    border: "solid 1px",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+                pointerEvents:'none',
+                position:'absolute'
                 }}
-        style={{
-        zIndex:zIndex[0],
-        width: `${videoWidth}px`, // 設定為全寬
-        height: `${videoHeight}px`, // 根據螢幕高度調整
-        transform: `scale(${videoScale})`, // 放大 1.5 倍
-        transformOrigin: "center center", // 以中心點放大
-        border: "solid 1px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-        pointerEvents:'none',
-        position:'absolute'
-    }}
-
-     allow="autoplay; fullscreen" ></iframe> */}
-
-{/* <iframe key={`t1${renderTrigger[1]}`} src={video.videoStreamUrl} 
-        onLoad={()=>{
-            setZIndex(()=>{
-                return {0:1,1:0}
-            })
-        }}
-        style={{
-        zIndex:zIndex[1],
-        width: `${videoWidth}px`, // 設定為全寬
-        height: `${videoHeight}px`, // 根據螢幕高度調整
-        transform: `scale(${videoScale})`, // 放大 1.5 倍
-        transformOrigin: "center center", // 以中心點放大
-        border: "solid 1px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-        pointerEvents:'none',
-        position:'absolute'
-    }}
-
-     allow="autoplay; fullscreen" ></iframe> */}
-
+                />
+        }
      </Box>
 }
 

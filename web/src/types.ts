@@ -1,3 +1,6 @@
+import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { SvgIconTypeMap } from "@mui/material";
+
 export interface PanelData {
     id: number;
     VDID: string;
@@ -55,5 +58,13 @@ export interface PanelData {
     auth: string; // 這是一個逗號分隔的權限字串
     createdAt: string; // ISO 8601 日期格式
     updatedAt: string; // ISO 8601 日期格式
+  }
+  
+
+  
+  export interface Routes {
+      path: string;
+      name: string;
+      icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>; // ✅ 直接適配 MUI 圖示
   }
   
