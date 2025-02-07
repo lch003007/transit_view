@@ -12,12 +12,16 @@ import {Chart as ChartJS} from 'chart.js'
 import { Dayjs } from "dayjs";
 import { PanelData,IntervalKeys,VdTraffic } from "@/types";
 import React from "react";
+import { LayoutContext } from "@/contexts/LayoutContext";
 
 
 
 
 function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:number}) {
-    const [activeTab, setActiveTab] = useState(0);
+  const{setFlash} = useContext(LayoutContext)  
+  const [activeTab, setActiveTab] = useState(0);
+  const [updateChart,setUpdateChart] = useState<Boolean>(false)
+
     const [checkBox,setCheckBox] = useState<IntervalKeys>('intervalTime0')
     const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
     const {post} = useApi()
@@ -55,6 +59,21 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     const boxRef = useRef<HTMLDivElement>(null)
     const chartRefRate = useRef<ChartJS | null>(null)
     const chartRefVolume = useRef<ChartJS | null>(null)
+    useEffect(()=>{
+      console.log('effect:',updateChart)
+      if(updateChart){
+        setUpdateChart(false)
+
+        setFlash((prevData)=>{
+          console.log(prevData)
+          return false
+        })
+        // chartRefRate.current?.resize();
+        // chartRefRate.current?.update();
+        // chartRefVolume.current?.resize();
+        // chartRefVolume.current?.update();
+      }
+    },[updateChart])
 
     const handleTabChange = (event:React.SyntheticEvent, newValue:number) => {
         setActiveTab(newValue);
@@ -97,25 +116,24 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     },[endDate])
 
     useEffect(()=>{
-      
       if(boxRef.current?.parentElement)
         {
             setWidth(boxRef.current.offsetWidth/5)
             setHeight(boxRef.current.offsetHeight/7)
-
         }
+        setUpdateChart(true)
+        setFlash(true)
     },[itemLength])
 
-    useEffect(()=>{
-      chartRefRate.current?.resize();
-      chartRefRate.current?.update();
-      chartRefVolume.current?.resize();
-      chartRefVolume.current?.update();
-    },[width,height])
+    // useEffect(()=>{
+    //   // console.log(123)
+
+    // },[width,height])
 
     useEffect(()=>{
       if(Object.keys(itemsSelected).includes(String(id)))
       {
+        console.log(123)
           const roadData = itemsSelected[id]
           post("vd/panel", { roadId: roadData.id }).then((data) => {
             setPanelData(() => {
@@ -125,6 +143,8 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
               return prevData;
             });
             panelRef.current = true;
+            console.log(updateChart)
+            setUpdateChart(true)
           });
       }
   },[Object.keys(itemsSelected).includes(String(id))])
