@@ -1,10 +1,17 @@
 'use client'
 import { Tabs, Tab, Box, Paper } from '@mui/material';
-import { useState } from 'react';
+import { ReactNode, useState,SyntheticEvent } from 'react';
 
-export default function MyTab({tabDatas,backgroundColor='#ffffff'}:any){
+interface TabData{
+    label:string,
+    key:string,
+    component:ReactNode
+}
+
+export default function MyTab({tabDatas,backgroundColor='#ffffff'}:{tabDatas:TabData[],backgroundColor?:string}){
     const [activeTab, setActiveTab] = useState(0);
-    const handleTabChange = (event:any, newValue:any) => {
+    const handleTabChange = (_:SyntheticEvent, newValue:number) => {
+        console.log(newValue)
         setActiveTab(newValue);
     };
 
@@ -50,7 +57,7 @@ export default function MyTab({tabDatas,backgroundColor='#ffffff'}:any){
                         borderRadius:'10px'
                     }}
                 >
-                    {tabDatas.map((tabData:any, index:any) => (
+                    {tabDatas.map((tabData:TabData, index:number) => (
                         <Tab key={index} label={tabData.label} id={`tab-${tabData.key}`}  />
                     ))}
                 </Tabs>
@@ -66,7 +73,8 @@ export default function MyTab({tabDatas,backgroundColor='#ffffff'}:any){
                     borderRadius: '8px',
                 }}
             >
-                {tabDatas.map((tabData:any, index:any) => <>
+
+                {tabDatas.map((tabData:TabData, index:number) => <>
                 
                 {activeTab === index &&(
                     <div

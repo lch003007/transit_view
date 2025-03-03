@@ -14,6 +14,7 @@ import MyDialog from "@/components/MyDialog"
 import EditGroup from "@/components/ItemPicker/editGroup"
 import DeleteGroup from "@/components/ItemPicker/deleteGroup"
 import { useSort } from "@/hooks/useSort"
+
 export default function LiveVideo(){
     const {sortRoad} = useSort()
     const [groupData,setGroupData] = useState<any>([])
@@ -21,7 +22,7 @@ export default function LiveVideo(){
     const [state,setState] = useState([{}])
     const {isLoading,setLoading} = useContext(LoadingContext)
     const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
-    const {openDialog,closeDialog,keys} = useContext(DialogContext)
+    const {openDialog,keys} = useContext(DialogContext)
     const {panelGroupKey,panelDeleteKey} = keys
     const [editGroupName,setEditGroupName] = useState("")
     useEffect(()=>{
@@ -37,7 +38,7 @@ export default function LiveVideo(){
     },[])
 
     const saveAs = ()=>{
-        const cctvIds:any = []
+        const cctvIds:number[] = []
         Array.from({length:itemLength},(_,index)=>{
             if(itemsSelected[index])
                 cctvIds.push(itemsSelected[index]['id'])

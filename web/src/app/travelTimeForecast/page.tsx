@@ -1,8 +1,8 @@
 'use client'
-import { ManualTable } from "@/components/Table/manualTable"
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi";
 import Wrapper from "@/components/Wrapper";
+import { FeatureTable } from "@/components/Table/featureTable";
 
 function formatDuration(seconds: number): string {
   if (seconds <= 0) return "0秒";
@@ -90,7 +90,7 @@ export default function TravelTimeForecast(){
 
     // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
     return <Wrapper isLoading={isLoading}>
-      <ManualTable data={groupData}  title={title} />
+      <FeatureTable data={groupData}  title={title} />
       {/* <ManualTable data={tableData}  title={title} /> */}
       </Wrapper>
   }

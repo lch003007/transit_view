@@ -1,5 +1,5 @@
 'use client';
-import { useState,createContext,Dispatch,SetStateAction } from "react";
+import { useState,createContext,Dispatch,SetStateAction, ReactNode } from "react";
 
 const LayoutContext = createContext<{
     isSidenavHide: boolean;
@@ -15,7 +15,7 @@ const LayoutContext = createContext<{
     setFlash:()=>{}
   });
 
-function LayoutProvider({children}:any){
+function LayoutProvider({children}:{children:ReactNode}){
 
     const [sidenavHide,setSidenavHide] = useState<boolean>(true)
     const [hoverSidenav,setHoverSidenav] = useState<boolean>(false)

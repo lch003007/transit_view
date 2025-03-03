@@ -1,8 +1,7 @@
 'use client'
-import { DbTable } from "@/components/Table/dbTable"
 import {Box} from "@mui/material";
 import { deleteCookie } from "cookies-next";
-
+import { FeatureTable } from "@/components/Table/featureTable";
 export default function RoadEvents(){
     deleteCookie('jwt')
     
@@ -16,7 +15,7 @@ export default function RoadEvents(){
     }
 
     return <Box>
-        <DbTable config={{
+        <FeatureTable config={{
             where:{
                 eventTime:{
                     gte:new Date(new Date().setHours(0, 0, 0, 0))
@@ -25,6 +24,8 @@ export default function RoadEvents(){
                     contains:'公路局東區養護工程分局'
                 }
             }
-        }} path='trafficStatus' title={title} totalFilter={true} />
+        }} path='trafficStatus' title={title} totalFilter={true}
+        api={true}
+        />
         </Box>
 }

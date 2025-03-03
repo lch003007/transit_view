@@ -124,7 +124,6 @@ export default function StreamView({id}:{id:number}){
                             
                         })
                     },20000)
-
                 }}
                 onError={()=>{
                     setTimeout(()=>{

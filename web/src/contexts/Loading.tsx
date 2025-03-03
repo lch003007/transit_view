@@ -1,5 +1,5 @@
 'use client';
-import { useState,createContext,Dispatch,SetStateAction } from "react";
+import { useState,createContext,Dispatch,SetStateAction, ReactNode } from "react";
 
 const LoadingContext = createContext<{
     isLoading: boolean;
@@ -9,7 +9,7 @@ const LoadingContext = createContext<{
     setLoading: () => {}, // 默認值為空函數
   });
 
-function LoadingProvider({children}:any){
+function LoadingProvider({children}:{children:ReactNode}){
 
     const [isLoading,setLoading] = useState<boolean>(false)
     return <LoadingContext.Provider

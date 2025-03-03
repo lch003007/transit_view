@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function useApi(){
 
-    const baseUrl = `http://${window.location.hostname}:3000`; // 定義你的 baseUrl
+    const baseUrl = `http://${window.location.hostname}:2500`; // 定義你的 baseUrl
     const get = async (path: string, config: AxiosRequestConfig = {})=>{
         try {
             const response: AxiosResponse = await axios.get(`${baseUrl}/${path}`, config);
@@ -13,10 +13,10 @@ function useApi(){
         }
     }
     
-    
-    const post= async (
+
+    const post= async <T = Record<string, unknown>>(
         path: string,
-        data: Record<string, unknown> = {},
+        data?: T,
         config: AxiosRequestConfig = {},
     )=> {
         try {

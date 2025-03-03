@@ -1,8 +1,8 @@
 'use client'
-import { DbTable } from '@/components/Table/dbTable';
 import User from './user';
 import MyTab from '@/components/MyTab';
-import React from 'react';
+import React, { Component } from 'react';
+import { FeatureTable } from '@/components/Table/featureTable';
 
 interface TabData{
     label: string,
@@ -120,7 +120,8 @@ export default function EquipmentManagement(){
     tabDatas.map((tabData:TabData,index:number)=>{
         tabDatas[index]['component'] = index==0?
         <User title={tabData.title} hide={tabData.hide}/>:
-<DbTable
+<FeatureTable
+                                api={true}
                                 path={tabData.path}
                                 title={tabData.title}
                                 form={true}
@@ -131,6 +132,10 @@ export default function EquipmentManagement(){
                             />
     })
     return (
-        <MyTab tabDatas={tabDatas}/>
+        <MyTab tabDatas={tabDatas.map((tabData:TabData)=>({
+            label:tabData.label,
+            key:tabData.key,
+            component:tabData.component
+        }))}/>
     );
 }

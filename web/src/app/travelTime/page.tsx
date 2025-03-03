@@ -1,6 +1,5 @@
 'use client'
 import useApi from "@/hooks/useApi";
-import { ManualTable } from "@/components/Table/manualTable"
 import { useEffect, useState,useContext } from "react";
 
 import Wrapper from "@/components/Wrapper";
@@ -10,6 +9,7 @@ import {Add} from '@mui/icons-material';
 import { MyText,MySelect, MyButton } from "@/components/MyInput";
 import MyBox from "@/components/MyBox";
 import { IconButton } from "@mui/material";
+import { FeatureTable } from "@/components/Table/featureTable";
 
 
 function formatDuration(seconds: number): string {
@@ -34,9 +34,35 @@ function formatDuration(seconds: number): string {
   return parts.join(" ");
 }
 
+interface TravelTime{
+  id:number,
+  name:string,
+  travelTime:number
+}
+
+interface TravelGroup{
+  id:number,
+  name:string,
+  segments:string
+}
+
+interface TravelTable{
+  id:number,
+  name:string,
+  segments:string[],
+  travelTime:number
+}
+
+interface TravelEdit{
+  id:number,
+  name:string,
+  segments:string[],
+  travelTime:string
+}
+
 export default function TravelTime(){
   const [deleteId,setDeleteId] = useState(0)
-  const [editValue,setEditValue] = useState({})
+  const [editValue,setEditValue] = useState<TravelEdit>({id:0,name:'',segments:[],travelTime:''})
   const {keys,openDialog} = useContext(DialogContext)
   const {addTravelTimeKey,editTravelTimeKey,deleteTravelTimeKey} = keys
   const {post} = useApi()
@@ -48,20 +74,20 @@ export default function TravelTime(){
     id:'id',
     segments:'segments'
   }
-  const [tableData,setTableData] = useState([])
-  const [groupData,setGroupData] = useState([])
+  const [tableData,setTableData] = useState<TravelTime[]>([])
+  const [groupData,setGroupData] = useState<TravelTable[]>([])
     useEffect(()=>{
       setLoading(true)
       post('travelTime/normal').then((data)=>{
         setTableData(data)
         post('travelTime/group').then((data2)=>{
-          const updateGroupData:any = []
-          data2.map((item:any)=>{       
-                 
+          const updateGroupData:TravelTable[] = []
+          data2.map((item:TravelGroup)=>{       
+            
             let groupTravelTime = 0
             for(const segmentId of item['segments'].split(',')){
               const id = Number(segmentId)==0?1:Number(segmentId)
-              groupTravelTime+= data.find((item1:any)=>item1.id==id)['travelTime']
+              groupTravelTime+= data.find((item1:TravelTime)=>item1.id==id)['travelTime']
             }
             updateGroupData.push({name:item.name,travelTime:groupTravelTime,segments:item['segments'].split(','),id:item.id})
           })
@@ -77,16 +103,16 @@ export default function TravelTime(){
     
     return <Wrapper isLoading={isLoading}>
       
-      <ManualTable addFunction={()=>{
+      <FeatureTable addFunction={()=>{
         openDialog(addTravelTimeKey)
       }}
 
-      editFunction={(item:any)=>{
+      editFunction={(item:TravelEdit)=>{
         setEditValue(item)
         openDialog(editTravelTimeKey)
       }}
 
-      deleteFunction={(item:any)=>{
+      deleteFunction={(item:TravelEdit)=>{
         setDeleteId(item.id)
         openDialog(deleteTravelTimeKey)
       }}
@@ -112,7 +138,7 @@ export default function TravelTime(){
     </Wrapper>
   }
 
-function AddComponent({data}:any){
+function AddComponent({data}:{data:TravelTime[]}){
   const {post} = useApi()
   const [state,setState] = useState({name:'',segments:[1]})
   const [amount,setAmount] = useState(1)
@@ -123,7 +149,7 @@ function AddComponent({data}:any){
       })
     }}/>
     {Array.from({ length: amount }, (_, index) => {
-            return <>點位{index+1}:<MySelect labels={data.map((item:any)=>item.name)} ids={data.map((item:any)=>item.id)} state={String(state.segments[index])} setState={(data)=>{
+            return <>點位{index+1}:<MySelect labels={data.map((item:TravelTime)=>item.name)} ids={data.map((item:TravelTime)=>String(item.id))} state={String(state.segments[index])} setState={(data)=>{
               setState((prevData)=>{
                 const updatedSegments = [...prevData.segments]
                 updatedSegments[index] = Number(data)
@@ -149,28 +175,28 @@ function AddComponent({data}:any){
   </MyBox>
 }
 
-function EditComponent({editValue,data}:any){
+function EditComponent({editValue,data}:{editValue:TravelEdit,data:TravelTime[]}){
   const {post} = useApi()
-  const [state,setState] = useState<any>(editValue)
-  const [amount,setAmount] = useState<any>(editValue?.segments?.length)
-  console.log(editValue)
+  const [state,setState] = useState<TravelEdit>(editValue)
+  const [amount,setAmount] = useState<number>(editValue?.segments?.length)
   return <MyBox sx={{padding:'10px',display:'flex',flexDirection:'column',gap:'10px',alignItems:'center'}}>
     群組名稱：<MyText value={state['name']} onChange={(e)=>{
-      setState((prevData:any)=>{
+      setState((prevData:TravelEdit)=>{
         return {...prevData,name:e.target.value}
       })
     }}/>
     {Array.from({ length: amount }, (_, index) => {
-            return <>點位{index+1}:<MySelect labels={data.map((item:any)=>item.name)} ids={data.map((item:any)=>item.id)} state={String(state.segments[index])} setState={(data)=>{
-              setState((prevData:any)=>{
+            return <>點位{index+1}:<MySelect labels={data.map((item:TravelTime)=>item.name)} ids={data.map((item:TravelTime)=>String(item.id))} state={String(state.segments[index])} setState={(data)=>{
+              setState((prevData:TravelEdit)=>{
+                console.log(prevData)
                 const updatedSegments = [...prevData.segments]
-                updatedSegments[index] = Number(data)
+                updatedSegments[index] = String(data)
                 return {...prevData,segments:updatedSegments}
               })
             }}   /></>
         })}
         <IconButton onClick={()=>{
-          setAmount((prevData:any)=>{
+          setAmount((prevData:number)=>{
             return prevData+1
           })
         }}>
@@ -192,7 +218,7 @@ function EditComponent({editValue,data}:any){
   </MyBox>
 }
 
-function DeleteComponent({deleteId}:any){
+function DeleteComponent({deleteId}:{deleteId:number}){
   const {post} = useApi()
 
   return <MyBox sx={{padding:'30px'}}>

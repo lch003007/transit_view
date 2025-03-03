@@ -1,31 +1,31 @@
 'use client';
-import { useState,createContext } from "react";
+import { useState,createContext, ReactNode } from "react";
 
 const DialogContext = createContext<{
-    openDialog:any;
-    closeDialog:any;
-    getOpen:any;
-    keys:any;
+    openDialog:(key:string)=>void;
+    closeDialog:(key:string)=>void;
+    getOpen:(key:string)=>boolean;
+    keys:Record<string,string>;
   }>({
     openDialog:()=>{},
     closeDialog:()=>{},
-    getOpen:()=>{},
+    getOpen:()=>{return true},
     keys:{}
   });
 
-function DialogProvider({children}:any){
+function DialogProvider({children}:{children:ReactNode}){
     
-    const [open,setOpen] = useState<any>({})
+    const [open,setOpen] = useState<Record<string,boolean>>({})
     return <DialogContext.Provider
     value={{
         openDialog:(key:string)=>{
-            setOpen((prevData:any)=>({...prevData,[key]:true}))
+            setOpen((prevData:Record<string,boolean>)=>({...prevData,[key]:true}))
         },
         closeDialog:(key:string)=>{
-            setOpen((prevData:any)=>({...prevData,[key]:false}))
+            setOpen((prevData:Record<string,boolean>)=>({...prevData,[key]:false}))
         },
         getOpen:(key:string)=>{
-            return open[key]
+            return open[key]==undefined?false:open[key]
         },
         keys:{
             addKey:'formAdd',

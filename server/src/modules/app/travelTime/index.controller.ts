@@ -39,7 +39,7 @@ export class TravelTimeController {
 
   @Post('volume/predict')
   async getVolumePredict(@Body()props:any){
-    return this.service.getVolumePredict(props.date)
+    return this.service.getVolumePredict(props.where.date)
   }
 
   @Post('group')

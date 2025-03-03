@@ -60,12 +60,10 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     const chartRefRate = useRef<ChartJS | null>(null)
     const chartRefVolume = useRef<ChartJS | null>(null)
     useEffect(()=>{
-      console.log('effect:',updateChart)
       if(updateChart){
         setUpdateChart(false)
 
         setFlash((prevData)=>{
-          console.log(prevData)
           return false
         })
         // chartRefRate.current?.resize();
@@ -133,7 +131,6 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     useEffect(()=>{
       if(Object.keys(itemsSelected).includes(String(id)))
       {
-        console.log(123)
           const roadData = itemsSelected[id]
           post("vd/panel", { roadId: roadData.id }).then((data) => {
             setPanelData(() => {
@@ -143,7 +140,6 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
               return prevData;
             });
             panelRef.current = true;
-            console.log(updateChart)
             setUpdateChart(true)
           });
       }

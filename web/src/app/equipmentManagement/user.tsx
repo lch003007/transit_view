@@ -24,11 +24,6 @@ import { routes } from "@/routes";
 import { MyButton,MyText } from "@/components/MyInput";
 import { Auth, Routes } from "@/types";
 
-// 定義數據的類型
-
-
-
-// ManualTable 組件
 export default function User({title={},hide=[],notNull=[],path='' }: { title?:Record<string,string>,hide?:string[],notNull?:string[],path?:string }) {
     const initFormData = {id:0,username:'',password:'',auth:''}
     const {post} = useApi()
