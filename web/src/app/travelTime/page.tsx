@@ -188,7 +188,6 @@ function EditComponent({editValue,data}:{editValue:TravelEdit,data:TravelTime[]}
     {Array.from({ length: amount }, (_, index) => {
             return <>點位{index+1}:<MySelect labels={data.map((item:TravelTime)=>item.name)} ids={data.map((item:TravelTime)=>String(item.id))} state={String(state.segments[index])} setState={(data)=>{
               setState((prevData:TravelEdit)=>{
-                console.log(prevData)
                 const updatedSegments = [...prevData.segments]
                 updatedSegments[index] = String(data)
                 return {...prevData,segments:updatedSegments}

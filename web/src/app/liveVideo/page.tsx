@@ -15,9 +15,16 @@ import EditGroup from "@/components/ItemPicker/editGroup"
 import DeleteGroup from "@/components/ItemPicker/deleteGroup"
 import { useSort } from "@/hooks/useSort"
 
+interface GroupData{
+    id:number,
+    name:string,
+    cctvIds:string,
+    itemLength:number
+}
+
 export default function LiveVideo(){
     const {sortRoad} = useSort()
-    const [groupData,setGroupData] = useState<any>([])
+    const [groupData,setGroupData] = useState<GroupData[]>([])
     const {post} = useApi()
     const [state,setState] = useState([{}])
     const {isLoading,setLoading} = useContext(LoadingContext)
@@ -28,7 +35,6 @@ export default function LiveVideo(){
     useEffect(()=>{
         setLoading(true)
         post('cctv').then(function(data){
-            console.log(data)
             setState(sortRoad(data))
             setLoading(false)
         })
@@ -68,12 +74,12 @@ export default function LiveVideo(){
                     saveAs()
                 }else{
                     openDialog(panelGroupKey)
-                    setEditGroupName(groupData.find((item:any)=>item.id==group).name)
+                    setEditGroupName(groupData.find((item:GroupData)=>item.id==group)?.name ||"")
                 }
             }}/>
     </Box>
     <MyDialog openKey={panelGroupKey}>
-        <EditGroup idKey={'cctvIds'} path='cctv/group/update' data={editGroupName} itemsSelected={itemsSelected} />
+        <EditGroup idKey={'cctvIds'} path='cctv/group/update' data={editGroupName} />
     </MyDialog>
     <MyDialog openKey={panelDeleteKey}>
         <DeleteGroup path='cctv/group/delete' />

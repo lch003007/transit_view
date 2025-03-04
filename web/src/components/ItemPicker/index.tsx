@@ -5,7 +5,22 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
 import {ButtonGroup,Button} from "@mui/material";
 
-export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],groupItemKey,idKey}:{title:string,itemKey:string,itemOptions:any,itemGroups?:any,groupItemKey?:string,idKey:string}){ 
+interface GroupData{
+  name:string,
+  itemLength:number,
+  roadData:Record<number,Record<string,string|number>>,
+  groupId:number
+}
+
+interface ItemGroup{
+  id:number,
+  name:string,
+  cctvIds?:string,
+  roadIds?:string,
+  itemLength:number
+}
+
+export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],groupItemKey,idKey}:{title:string,itemKey:string,itemOptions:Record<string,string|number>[],itemGroups?:ItemGroup[],groupItemKey?:string,idKey:string}){ 
   const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
     const vidtoLengthOption = [1,4,9,16]
     useEffect(()=>{
@@ -51,7 +66,7 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
 
         {/* 表格內容 */}
         <TableBody>
-          {itemGroups.map((item:any)=>{
+          {itemGroups.map((item:ItemGroup)=>{
             return<TableRow
             key={`itemRow${item.id}`}
             sx={{
@@ -62,16 +77,16 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
           >
             <TableCell draggable
             onDragStart={(e) => {
-              const groupData:any = {
-                name:item.name,
-                itemLength:item.itemLength,
+              const groupData:GroupData = {
+                name:String(item.name),
+                itemLength:Number(item.itemLength),
                 roadData:{},
-                groupId:item.id
+                groupId:Number(item.id)
               }
-              item[idKey].split(',').map((roadId:any,index:any)=>{
-                if(roadId!=0)
+              String(item[idKey as keyof typeof item]).split(',').map((roadId:string,index:number)=>{
+                if(Number(roadId)!=0)
                 {
-                  groupData['roadData'][index] = itemOptions.filter((option:any)=>option.id==roadId)[0]
+                  groupData['roadData'][index] = itemOptions.filter((option:Record<string,string|number>)=>option.id==roadId)[0]
                 }
               })
               e.dataTransfer.setData("group", JSON.stringify(groupData));
@@ -82,7 +97,7 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
           </TableRow>
           })}
           
-          {itemOptions.map((item:any,index:number) => (
+          {itemOptions.map((item:Record<string,string|number>,index:number) => (
             <TableRow
               key={`itemRow${item.id}`}
               sx={{

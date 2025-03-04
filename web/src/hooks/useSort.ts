@@ -65,7 +65,6 @@ interface LocationItem {
       });
   
       // 將不符合格式的印出來
-      console.log('Invalid locations:', invalidLocations);
   
       return sortedItems;
     };

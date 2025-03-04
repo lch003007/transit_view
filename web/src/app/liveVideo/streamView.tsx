@@ -10,7 +10,7 @@ export default function StreamView({id}:{id:number}){
     const videoHeight = 212
     const [videoScale,setVideoScale] = useState(1)
     const boxRef = useRef<HTMLDivElement>(null)
-    const [videoUrl,setVideoUrl] = useState<any>(null)
+    const [videoUrl,setVideoUrl] = useState<string>('')
     const video = {videoStreamUrl:'',location:'',...itemsSelected[id]}
     useEffect(()=>{
         if(boxRef.current)
@@ -29,17 +29,19 @@ export default function StreamView({id}:{id:number}){
     useEffect(()=>{
         setVideoUrl(video.videoStreamUrl)
     },[video.videoStreamUrl])
-    // useEffect(()=>{
-    //     const interval = setInterval(()=>{
-    //         setVideoUrl((prevData:any)=>{
-    //             const baseUrl = prevData.includes('?')?
-    //             prevData.split('?')[0]:prevData
-    //             return `${baseUrl}?ts=${new Date().getTime()}}`
+    useEffect(()=>{
+        const interval = setInterval(()=>{
+            setVideoUrl((prevData:string)=>{
                 
-    //         })
-    //     },30000)
-    //     return ()=>clearInterval(interval)
-    // },[])
+                
+                const baseUrl = prevData.includes('?')?
+                prevData.split('?')[0]:prevData
+                return `${baseUrl}?ts=${new Date().getTime()}`
+                
+            })
+        },10000)
+        return ()=>clearInterval(interval)
+    },[])
     return <Box 
     onMouseEnter={()=>{
         setVideoHover(true)
@@ -103,39 +105,8 @@ export default function StreamView({id}:{id:number}){
             
             </Box>
         </Box>
-        {video.videoStreamUrl==""?<></>:
-                <img 
-                src={videoUrl!=null?videoUrl:video.videoStreamUrl}
-                style={{
-                    width: `${videoWidth}px`,
-                    height: `${videoHeight}px`,
-                    transform: `scale(${videoScale})`,
-                    border: "solid 1px",
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-                pointerEvents:'none',
-                position:'absolute'
-                }}
-                onLoad={()=>{
-                    setTimeout(()=>{
-                        setVideoUrl((prevData:any)=>{
-                            const baseUrl = prevData.includes('?')?
-                            prevData.split('?')[0]:prevData
-                            return `${baseUrl}?ts=${new Date().getTime()}`
-                            
-                        })
-                    },20000)
-                }}
-                onError={()=>{
-                    setTimeout(()=>{
-                        setVideoUrl((prevData:any)=>{
-                            const baseUrl = prevData.includes('?')?
-                            prevData.split('?')[0]:prevData
-                            return `${baseUrl}?ts=${new Date().getTime()}`
-                        })
-                    },60000)
-                }}
-                />
-        }
+        <img src={videoUrl!=null?videoUrl:video.videoStreamUrl}/>
+
      </Box>
 }
 

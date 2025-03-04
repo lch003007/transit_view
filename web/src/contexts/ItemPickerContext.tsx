@@ -1,12 +1,12 @@
 'use client';
 import { useState,createContext,Dispatch,SetStateAction, ReactNode } from "react";
 
-type itemsSelected = Record<string, any>;
+type itemsSelected = Record<string, Record<string,number|string>>;
 
 const ItemPickerContext = createContext<{
     itemLength:number;
     setItemLength:Dispatch<SetStateAction<number>>;
-    itemsSelected:any
+    itemsSelected:itemsSelected
     setItemsSelected:Dispatch<SetStateAction<itemsSelected>>
     group:number,
     setGroup:Dispatch<SetStateAction<number>>
@@ -23,7 +23,6 @@ function ItemPickerProvider({children}:{children:ReactNode}){
     const [itemLength,setItemLength] = useState(1)
     const [itemsSelected,setItemsSelected] = useState<itemsSelected>({})
     const [group,setGroup] = useState(0)
-    console.log(itemsSelected)
     return <ItemPickerContext.Provider
     value={{
         itemLength,

@@ -6,7 +6,7 @@ import MyBox from "../MyBox"
 import { Box } from "@mui/material"
 import { MyButton, MyText } from "../MyInput"
 
-export default function  EditGroup({data,idKey,path}:any){
+export default function  EditGroup({data,idKey,path}:{data:string,idKey:string,path:string}){
     const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
     const {post} = useApi()
     const [state,setState] = useState(data)

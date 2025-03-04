@@ -22,7 +22,17 @@ import {
     Legend
   );
   
-  export default function MyChart({labels,datasets,ref}:any) {
+  interface Datasets{
+    backgroundColor:string,
+    borderColor:string,
+    data:number[],
+    fill:boolean,
+    label:string,
+    tension:number
+  }
+
+  export default function MyChart({labels,datasets,ref}:{labels:string[],datasets:Datasets[],ref:any}) {
+    console.log(ref)
 
     const options: ChartOptions<'line'> = {
       responsive: true,

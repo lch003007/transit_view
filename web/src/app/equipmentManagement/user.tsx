@@ -70,7 +70,6 @@ export default function User({title={},hide=[],notNull=[],path='' }: { title?:Re
         const titleKey = key as keyof FormState
         newItem[titleKey] = item[titleKey]
     })
-    console.log(newItem)
     return newItem
   }).slice(page * rowsPerPage, (page + 1) * rowsPerPage);
  

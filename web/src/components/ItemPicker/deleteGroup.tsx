@@ -5,7 +5,7 @@ import { useContext } from "react"
 import MyBox from "../MyBox"
 import { MyButton } from "../MyInput"
 
-export default function DeleteGroup({path}:any){
+export default function DeleteGroup({path}:{path:string}){
     const {group} = useContext(ItemPickerContext)
     const {post} = useApi()
 

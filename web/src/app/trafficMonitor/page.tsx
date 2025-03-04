@@ -14,9 +14,16 @@ import EditGroup from "@/components/ItemPicker/editGroup"
 import DeleteGroup from "@/components/ItemPicker/deleteGroup"
 import { useSort } from "@/hooks/useSort"
 
+interface GroupData{
+    id:number,
+    name:string,
+    cctvIds:string,
+    itemLength:number
+}
+
 export default function TrafficMonitor(){
     const {sortRoad} = useSort()
-    const [groupData,setGroupData] = useState<any>([])
+    const [groupData,setGroupData] = useState<GroupData[]>([])
     const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
     const {openDialog,keys} = useContext(DialogContext)
     const [editGroupName,setEditGroupName] = useState("")
@@ -36,7 +43,7 @@ export default function TrafficMonitor(){
     },[])
 
     const saveAs = ()=>{
-        const roadIds:any = []
+        const roadIds:number[] = []
         Array.from({length:itemLength},(_,index)=>{
             if(itemsSelected[index])
                 roadIds.push(itemsSelected[index]['id'])
@@ -68,12 +75,12 @@ export default function TrafficMonitor(){
                     saveAs()
                 }else{
                     openDialog(panelGroupKey)
-                    setEditGroupName(groupData.find((item:any)=>item.id==group).name)
+                    setEditGroupName(groupData.find((item:GroupData)=>item.id==group)?.name||"")
                 }
             }}/>
     </Box>
     <MyDialog openKey={panelGroupKey}>
-        <EditGroup idKey={'roadIds'} path='vd/panelGroup/update' data={editGroupName} itemsSelected={itemsSelected} />
+        <EditGroup idKey={'roadIds'} path='vd/panelGroup/update' data={editGroupName} />
     </MyDialog>
     <MyDialog openKey={panelDeleteKey}>
         <DeleteGroup path='vd/panelGroup/delete' />

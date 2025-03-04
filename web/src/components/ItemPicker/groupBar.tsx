@@ -1,9 +1,16 @@
 import {Save,SaveAs,Delete} from '@mui/icons-material';
 import { IconButton,Tooltip } from '@mui/material';
 import MyBox from '../MyBox';
+import { ReactNode } from 'react';
 
-export default function GroupBar({save=()=>{},saveAs=()=>{},remove=()=>{}}:any){
-    const functionButtons = [
+interface FunctionButton{
+    component:ReactNode,
+    tooltip:string,
+    onClick:()=>void
+}
+
+export default function GroupBar({save=()=>{},saveAs=()=>{},remove=()=>{}}:{save:()=>void,saveAs:()=>void,remove:()=>void}){
+    const functionButtons:FunctionButton[] = [
         {
             component:<Save/>,
             tooltip:'儲存群組',
@@ -21,7 +28,7 @@ export default function GroupBar({save=()=>{},saveAs=()=>{},remove=()=>{}}:any){
         },
     ]
     return <MyBox sx={{marginLeft:'10px',display:'flex',flexDirection:'column',background:'white'}}>
-        {functionButtons.map((functionButton:any)=>{
+        {functionButtons.map((functionButton:FunctionButton)=>{
             return <Tooltip title={functionButton.tooltip}><IconButton onClick={functionButton.onClick}>{functionButton.component}</IconButton></Tooltip>
         })}
         {/* <IconButton><Save/></IconButton>

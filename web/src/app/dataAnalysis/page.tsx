@@ -93,7 +93,7 @@ export default function DataAnalysis(){
             }}/>
         </Box>
         <MyDialog openKey={panelGroupKey}>
-        <EditGroup idKey={'roadIds'} path='vd/panelGroup/update' data={editGroupName} itemsSelected={itemsSelected} />
+        <EditGroup idKey={'roadIds'} path='vd/panelGroup/update' data={editGroupName} />
     </MyDialog>
     <MyDialog openKey={panelDeleteKey}>
         <DeleteGroup path='vd/panelGroup/delete' />

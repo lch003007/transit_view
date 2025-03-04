@@ -37,34 +37,22 @@ export default function TravelTimeForecast(){
   }
     const {post} = useApi()
   // const [tableData,setTableData] = useState([])
-  const [groupData,setGroupData] = useState([])
+  const [groupData,setGroupData] = useState<Record<string,string>[]>([])
   const [isLoading,setLoading] = useState(false)
     useEffect(()=>{
       setLoading(true)
       post('travelTime/predict').then((data)=>{
-        // setTableData(data.map((item:any)=>{
-        //   return {
-        //     name:item.name,
-        //     travelTime:formatDuration(item['travelTime']),
-        //     travelTimePredict1:formatDuration(item['travelTimePredict1']),
-        //     travelTimePredict2:formatDuration(item['travelTimePredict2']),
-        //     travelTimePredict3:formatDuration(item['travelTimePredict3']),
-        //     travelTimePredict4:formatDuration(item['travelTimePredict4']),
-        //   }
-        // }))
         post('travelTime/group').then((data2)=>{
-          const updateGroupData:any = []
-          data2.map((item:any)=>{       
+          const updateGroupData:Record<string,string>[] = []
+          data2.map((item:Record<string,string|number>)=>{       
             let groupTravelTime = [0,0,0,0,0]
-            console.log(123)
-            console.log(item['segments'].split(','))
-            for(const segmentId of item['segments'].split(',')){
+            for(const segmentId of String(item['segments']).split(',')){
               const id = Number(segmentId)==0?1:Number(segmentId)
               Array.from({length:5},(_,index)=>{
                 if(index==0){
-                  groupTravelTime[index]+= data.find((item1:any)=>item1.travelSegmentId==id)['travelTime']
+                  groupTravelTime[index]+= data.find((item1:Record<string,string|number>)=>item1.travelSegmentId==id)['travelTime']
                 }else{
-                  groupTravelTime[index]+= data.find((item1:any)=>item1.travelSegmentId==id)[`travelTimePredict${index}`]
+                  groupTravelTime[index]+= data.find((item1:Record<string,string|number>)=>item1.travelSegmentId==id)[`travelTimePredict${index}`]
                 }
                 
             })
@@ -72,7 +60,7 @@ export default function TravelTimeForecast(){
             }
             // console.log(456)
             updateGroupData.push({
-              name:item.name,
+              name:String(item.name),
               travelTime:formatDuration(groupTravelTime[0]),
               travelTimePredict1:formatDuration(groupTravelTime[1]),
               travelTimePredict2:formatDuration(groupTravelTime[2]),

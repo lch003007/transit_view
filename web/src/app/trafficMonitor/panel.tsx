@@ -45,8 +45,8 @@ function Panel({id}:{id:number}) {
           }).then((data)=>{
             setPanelData((prevData)=>{
                 Array.from({ length: 4 }, (_, index) =>{
-                    prevData[`flowValue${index}`] = data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)
-                    prevData[`rateValue${index}`] = String(Math.round(data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:any) => acc + cur.Volume, 0)/Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])))
+                    prevData[`flowValue${index}`] = data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:Record<string,number|string|null>) => acc + Number(cur.Volume), 0)
+                    prevData[`rateValue${index}`] = String(Math.round(data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:Record<string,number|string|null>) => acc + Number(cur.Volume), 0)/Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])))
                 })
                 return prevData
             })
@@ -269,7 +269,7 @@ function Panel({id}:{id:number}) {
                         "rateGate3"
                       ]}
                       reload={false}
-                      callbackFunction={(state:any)=>{
+                      callbackFunction={(state:Record<string,string>)=>{
                         setPanelData((prevData)=>{
                             Object.keys(state).map(key=>{
                                 prevData[key] = state[key]

@@ -11,7 +11,6 @@ interface TabData{
 export default function MyTab({tabDatas,backgroundColor='#ffffff'}:{tabDatas:TabData[],backgroundColor?:string}){
     const [activeTab, setActiveTab] = useState(0);
     const handleTabChange = (_:SyntheticEvent, newValue:number) => {
-        console.log(newValue)
         setActiveTab(newValue);
     };
 
