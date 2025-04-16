@@ -28,6 +28,7 @@ execute-sql:
 	$(call EXEC_SQL,sql/device.sql)
 	$(call EXEC_SQL,sql/road.sql)
 	$(call EXEC_SQL,sql/travel_segments.sql)
+	$(call EXEC_SQL,sql/user.sql)
 
 init-project:
 	cd server && npm i

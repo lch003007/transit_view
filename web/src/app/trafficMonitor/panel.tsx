@@ -48,7 +48,7 @@ function Panel({id}:{id:number}) {
                     prevData[`flowValue${index}`] = data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:Record<string,number|string|null>) => acc + Number(cur.Volume), 0)
                     prevData[`rateValue${index}`] = String(Math.round(data.slice(0,Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])).reduce((acc:number, cur:Record<string,number|string|null>) => acc + Number(cur.Volume), 0)/Number(prevData[`intervalTime${index}`])*Number(prevData['ActualLaneNum'])))
                 })
-                return prevData
+                return {...prevData}
             })
 
         })
@@ -85,7 +85,7 @@ function Panel({id}:{id:number}) {
                         prevData[`rateValue${index}`] = null
                         prevData[`flowValue${index}`] = null
                     })
-                    return prevData
+                    return {...prevData}
                 }
                     )
             panelRef.current = true
@@ -184,7 +184,7 @@ function Panel({id}:{id:number}) {
                         setPanelData({})
                         setItemsSelected((prevData)=>{
                             delete prevData[id]
-                            return prevData
+                            return {...prevData}
                         })
                         }}>
                     <CloseIcon  sx={{fontSize:height,color:'white'}}/>
@@ -216,7 +216,7 @@ function Panel({id}:{id:number}) {
                                 "rateGate",
                                 "rateValue",
                             ].map((key) => {
-                                const fieldKey = `${key}${index}`;
+                                const fieldKey = `${key}${index}`;           
                                 const fieldData = panelData[fieldKey]??'N/A';
                                 return (
                                     <MyTd key={fieldKey}>
@@ -274,7 +274,7 @@ function Panel({id}:{id:number}) {
                             Object.keys(state).map(key=>{
                                 prevData[key] = state[key]
                             })
-                            return prevData
+                            return {...prevData}
                         })
                         setDefaultData(state)
                       }}

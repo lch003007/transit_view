@@ -178,14 +178,19 @@ export default function User({title={},hide=[],notNull=[],path='' }: { title?:Re
       <EditUser editData={editData} />
 </MyDialog> 
 <MyDialog openKey={deleteKey}>
-      <Form addKey={addKey} editKey={editKey} deleteKey={deleteKey} path={`${path}/delete`} hide={hide} type={deleteKey} defaultData={deleteData} title={title} notNull={notNull} />
+      <Form 
+      path={`${path}/delete`} 
+      hide={hide} 
+      type={deleteKey} 
+      defaultData={deleteData} 
+      title={title} notNull={notNull} />
 </MyDialog>
     </>
   );
 }
 
 function AddUser(){
-    const [state,setState] = useState({username:'',password:'',auth:''})
+    const [state,setState] = useState<FormState>({username:'',password:'',auth:''})
     return <UserForm state={state} setState={setState} path='auth/insert' type='add'/>
 
 }
@@ -200,20 +205,9 @@ interface UserFormProps{
     usernameDisabled?:boolean
 }
 
-interface FormState{
-    id?:number,
-    username:string,
-    password:string,
-    auth:string
+interface FormState {
+    [key: string]: string | number; // 索引簽名
 }
-
-interface FormAllState{
-    id:number,
-    username:string,
-    password:string,
-    auth:string
-}
-
 interface EditState{
     username?:string,
     password?:string,
@@ -233,11 +227,12 @@ function UserForm({state,setState,path,type,originalState,id,usernameDisabled=fa
                 return {...prevData,password:e.target.value}
             })
         }} />
-        權限:<AuthSelect state={state['auth']} setState={(data:string)=>{
+        權限:<AuthSelect state={String(state['auth'])} setState={(data:string)=>{
         setState((prevData:FormState)=>{
             return {...prevData,auth:data}
         })
     }}  />
+
         <Box sx={{display:'flex',justifyContent:'start'}}>
 
             <MyButton onClick={()=>{
@@ -254,9 +249,9 @@ function UserForm({state,setState,path,type,originalState,id,usernameDisabled=fa
 function postFormat(data:FormState,type:string,originalData?:FormState,id?:number){
     if(type=='edit'&&originalData){
         const editData:EditState = {
-            username:data['username']!=originalData['username']?data['username']:undefined,
-            password:data['password']!=originalData['password']?data['password']:undefined,
-            auth:data['auth']!=originalData['auth']?data['auth']:undefined,
+            username:String(data['username']!=originalData['username']?data['username']:undefined),
+            password:String(data['password']!=originalData['password']?data['password']:undefined),
+            auth:String(data['auth']!=originalData['auth']?data['auth']:undefined),
         }
         return {
             where:{
@@ -269,9 +264,9 @@ function postFormat(data:FormState,type:string,originalData?:FormState,id?:numbe
 }
 
 function EditUser({editData}:{editData:FormState}){
-    const [state,setState] = useState({...editData,password:''})
+    const [state,setState] = useState<FormState>({...editData,password:''})
     
-    return <UserForm originalState={{username:editData.username,password:'',auth:editData.auth}} id={editData.id} state={state} setState={setState} path='auth/update' type='edit' usernameDisabled={true} />
+    return <UserForm originalState={{username:editData.username,password:'',auth:editData.auth}} id={Number(editData.id)} state={state} setState={setState} path='auth/update' type='edit' usernameDisabled={true} />
 }
 
 function AuthSelect({state,setState}:{state:string,setState:(data:string)=>void}){
@@ -283,7 +278,7 @@ function AuthSelect({state,setState}:{state:string,setState:(data:string)=>void}
         title[route.path] = <><input type="checkbox" />{route.name}</>
     })
     return <ul>{routes.map((item:Routes)=>{
-        return <li style={{display:'flex'}}><input checked={values.includes(item.path)}
+        return <li key={item.name} style={{display:'flex'}}><input checked={values.includes(item.path)}
         onChange={(e)=>{
             if(e.target.checked)
                 setState([...values,item.path].join(','))

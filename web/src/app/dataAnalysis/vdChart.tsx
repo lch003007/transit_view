@@ -8,26 +8,22 @@ import useApi from "@/hooks/useApi";
 import { MyCheckBoxGroup } from "@/components/MyInput";
 import MyChart from "@/components/MyChart";
 import { Tabs, Tab, Box, Paper } from '@mui/material';
-import {Chart as ChartJS} from 'chart.js'
 import { Dayjs } from "dayjs";
 import { PanelData,IntervalKeys,VdTraffic } from "@/types";
 import React from "react";
-import { LayoutContext } from "@/contexts/LayoutContext";
 
 
 
 
 function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:number}) {
-  const{setFlash} = useContext(LayoutContext)  
   const [activeTab, setActiveTab] = useState(0);
-  const [updateChart,setUpdateChart] = useState<Boolean>(false)
 
     const [checkBox,setCheckBox] = useState<IntervalKeys>('intervalTime0')
-    const {setGroup,itemsSelected,setItemsSelected,itemLength,setItemLength} = useContext(ItemPickerContext)
+    const {setGroup,itemsSelected,setItemsSelected,setItemLength} = useContext(ItemPickerContext)
     const {post} = useApi()
     const panelRef = useRef(false)
-    const [width,setWidth] = useState(0)
-    const [height,setHeight] = useState(0)
+    const width = 0
+    const height = 0
     const initPanelData = {
       id: 0,
       VDID: "",
@@ -57,21 +53,7 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     }
     const [panelData,setPanelData] = useState<PanelData>(initPanelData)
     const boxRef = useRef<HTMLDivElement>(null)
-    const chartRefRate = useRef<ChartJS | null>(null)
-    const chartRefVolume = useRef<ChartJS | null>(null)
-    useEffect(()=>{
-      if(updateChart){
-        setUpdateChart(false)
 
-        setFlash((prevData)=>{
-          return false
-        })
-        // chartRefRate.current?.resize();
-        // chartRefRate.current?.update();
-        // chartRefVolume.current?.resize();
-        // chartRefVolume.current?.update();
-      }
-    },[updateChart])
 
     const handleTabChange = (event:React.SyntheticEvent, newValue:number) => {
         setActiveTab(newValue);
@@ -97,7 +79,7 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
             setPanelData((prevData)=>{
                 prevData['speeds'] = data.map((item:VdTraffic)=>item.Speed)
                 prevData['volumes'] = data.map((item:VdTraffic)=>item.Volume)
-                return prevData
+                return {...prevData}
             })
 
         })
@@ -114,21 +96,6 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
     },[endDate])
 
     useEffect(()=>{
-      if(boxRef.current?.parentElement)
-        {
-            setWidth(boxRef.current.offsetWidth/5)
-            setHeight(boxRef.current.offsetHeight/7)
-        }
-        setUpdateChart(true)
-        setFlash(true)
-    },[itemLength])
-
-    // useEffect(()=>{
-    //   // console.log(123)
-
-    // },[width,height])
-
-    useEffect(()=>{
       if(Object.keys(itemsSelected).includes(String(id)))
       {
           const roadData = itemsSelected[id]
@@ -137,10 +104,9 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
               const prevData = { ...roadData, ...data };
               prevData["speeds"] = [];
               prevData["volumes"] = [];
-              return prevData;
+              return {...prevData};
             });
             panelRef.current = true;
-            setUpdateChart(true)
           });
       }
   },[Object.keys(itemsSelected).includes(String(id))])
@@ -202,74 +168,81 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
               >
                                 <Box sx={{ display: "flex", justifyContent: "end",position:'relative' }}>
                   <Box sx={{position:'absolute',zIndex:'100'}}>
-                  {panelData.location}
                   <IconButton onClick={()=>{
                     setItemsSelected((prevData)=>{
                       delete prevData[id]
                       return prevData
                     })
+
                     setPanelData(initPanelData)
                         setItemsSelected((prevData)=>{
                             delete prevData[id]
-                            return prevData
+                            return {...prevData}
                         })
                   }}><CloseIcon/></IconButton>
-                  <MyCheckBoxGroup<IntervalKeys>
-                    state={checkBox}
-                    setState={setCheckBox}
-                    labels={Array.from({ length: 4 }, (_, index) => {
-                      const intervalKey = `intervalTime${index}` as IntervalKeys
-                      return `${panelData[intervalKey]}分鐘`;
-                    })}
-                    values={Array.from({ length: 4 }, (_, index) => {
-                      const intervalKey = `intervalTime${index}` as IntervalKeys
-                      return intervalKey;
-                    })}
-                  />
                   </Box>
-                </Box>
-                <Tabs
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  aria-label="tab navigation"
-                  variant="scrollable"
-                  scrollButtons="auto"
-                  indicatorColor="primary"
-                  textColor="primary"
-                  sx={{
-                    backgroundColor: "#ffffff",
-                    ".MuiTab-root": {
-                      fontWeight: "bold",
-                      textTransform: "none",
-                      padding: "12px 16px",
-                      minWidth: "100px",
-                      backgroundColor: "#ffffff",
-                      borderRadius: "8px 8px 0 0", // 標籤的圓角設計
-                      ":hover": {
-                        backgroundColor: "#f0f0f0",
-                      },
-                    },
-                    ".MuiTab-root.Mui-selected": {
-                      color: "primary.main",
-                      backgroundColor: "#f5f5f5",
-                    },
-                    ".MuiTabs-indicator": {
-                      display: "none", // 隱藏原生指示器，讓背景色代替
-                    },
-                    borderRadius: "10px",
-                  }}
-                >
-                  <Tab key="rate" label="平均速率" id="rate" />
-                  <Tab key="speed" label="總車流量" id="speed" />
-                </Tabs>
-              </Paper>
-      
-              <Box sx={{ background: "white",height:'80%' }}>
 
+
+                </Box>
+                <Box sx={{ display: 'flex', width: '100%' }}>
+  {/* Tabs 區域，固定大小 / 可滾動 */}
+  <Box sx={{ flexShrink: 0, minWidth: 0 }}>
+    <Tabs
+      value={activeTab}
+      onChange={handleTabChange}
+      variant="scrollable"
+      scrollButtons="auto"
+      indicatorColor="primary"
+      textColor="primary"
+      sx={{
+        backgroundColor: "#ffffff",
+        ".MuiTab-root": {
+          fontWeight: "bold",
+          textTransform: "none",
+          padding: "12px 16px",
+          minWidth: "100px",
+          backgroundColor: "#ffffff",
+          borderRadius: "8px 8px 0 0",
+          ":hover": {
+            backgroundColor: "#f0f0f0",
+          },
+        },
+        ".MuiTab-root.Mui-selected": {
+          color: "primary.main",
+          backgroundColor: "#f5f5f5",
+        },
+        ".MuiTabs-indicator": {
+          display: "none",
+        },
+      }}
+    >
+      <Tab label="平均速率" />
+      <Tab label="總車流量" />
+    </Tabs>
+  </Box>
+
+  {/* location 區域，吃剩下寬度，過長變 ... */}
+  <Box
+    sx={{
+      flexGrow: 1,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      ml: 2,
+      alignSelf: 'center', // 垂直置中
+    }}
+  >
+    {panelData.location}
+  </Box>
+</Box>
+                
+              </Paper>
+              
+              <Box sx={{ background: "white",height:'80%',display:'flex',justifyContent:'space-around' }}>
+                
       
                 {activeTab === 0 && (
                   <MyChart
-                  ref={chartRefRate}
                     labels={Array.from({ length: amount }, (_, index) =>
                       endDate.subtract(index, "minutes").format("HH:mm")
                     ).reverse()}
@@ -301,7 +274,6 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
       
                 {activeTab === 1 && (
                   <MyChart
-                  ref={chartRefVolume}
                     labels={Array.from({ length: amount }, (_, index) =>
                       endDate.subtract(index, "minutes").format("HH:mm")
                     ).reverse()}
@@ -328,7 +300,21 @@ function VdChart({endDate,amount = 100,id}:{endDate:Dayjs,amount?:number,id:numb
                     ]}
                   />
                 )}
+
+                  <MyCheckBoxGroup<IntervalKeys>
+                    state={checkBox}
+                    setState={setCheckBox}
+                    labels={Array.from({ length: 4 }, (_, index) => {
+                      const intervalKey = `intervalTime${index}` as IntervalKeys
+                      return `${panelData[intervalKey]}min`;
+                    })}
+                    values={Array.from({ length: 4 }, (_, index) => {
+                      const intervalKey = `intervalTime${index}` as IntervalKeys
+                      return intervalKey;
+                    })}
+                  />
               </Box>
+              
             </Box>
           )}
         </Box>

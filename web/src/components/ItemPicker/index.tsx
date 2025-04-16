@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { Box } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { ItemPickerContext } from "@/contexts/ItemPickerContext";
@@ -23,10 +23,11 @@ interface ItemGroup{
 export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],groupItemKey,idKey}:{title:string,itemKey:string,itemOptions:Record<string,string|number>[],itemGroups?:ItemGroup[],groupItemKey?:string,idKey:string}){ 
   const {setItemLength,itemLength,setItemsSelected,itemsSelected} = useContext(ItemPickerContext)
     const vidtoLengthOption = [1,4,9,16]
+    const [keyword,setKeyword] = useState('')
     useEffect(()=>{
       setItemLength(1)
       setItemsSelected({})
-    },[])
+    },[setItemLength,setItemsSelected])
     return (
 <Box sx={{
     background:'#3A566C',
@@ -66,7 +67,16 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
 
         {/* 表格內容 */}
         <TableBody>
+          <TableRow>
+            <TableCell>
+      <input type="text" value={keyword} placeholder="請輸入關鍵字"
+      onChange={(e)=>{setKeyword(e.target.value)}} style={{height:'30px',border:'none',outline:'none',    borderRadius: "5px", 
+          boxShadow: "5px 4px 4px rgba(0, 0, 0, 0.5)",width:'100px'}}/>
+            </TableCell>
+          </TableRow>
           {itemGroups.map((item:ItemGroup)=>{
+            if(!(String(item[groupItemKey as keyof typeof item])?.includes(keyword)))
+              return <></>
             return<TableRow
             key={`itemRow${item.id}`}
             sx={{
@@ -97,8 +107,16 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
           </TableRow>
           })}
           
-          {itemOptions.map((item:Record<string,string|number>,index:number) => (
-            <TableRow
+          {itemOptions.map((item:Record<string,string|number>) => {
+            let color = 'white'
+            if(!(String(item[itemKey as keyof typeof item])?.includes(keyword)))
+              return <></>
+            Object.keys(itemsSelected).map(key=>{
+              if(itemsSelected[key]['id']==item['id'])
+                color = '#84C1FF'
+            })
+
+            return <TableRow
               key={`itemRow${item.id}`}
               sx={{
                 "&:not(:last-child)": {
@@ -109,11 +127,11 @@ export default function ItemPicker({title,itemKey,itemOptions,itemGroups=[],grou
               <TableCell draggable
               onDragStart={(e) => {
                 e.dataTransfer.setData("item", JSON.stringify(item));
-              }} sx={{ fontSize: "16px", padding: "15px",cursor: "pointer",color:itemsSelected[index]?'#84C1FF':'white' }}>
+              }} sx={{ fontSize: "16px", padding: "15px",cursor: "pointer",color:color }}>
                 {item[itemKey as keyof typeof item]}
                 </TableCell>
             </TableRow>
-          ))}
+})}
         </TableBody>
       </Table>
     </TableContainer>

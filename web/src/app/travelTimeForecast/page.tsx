@@ -45,7 +45,7 @@ export default function TravelTimeForecast(){
         post('travelTime/group').then((data2)=>{
           const updateGroupData:Record<string,string>[] = []
           data2.map((item:Record<string,string|number>)=>{       
-            let groupTravelTime = [0,0,0,0,0]
+            const groupTravelTime = [0,0,0,0,0]
             for(const segmentId of String(item['segments']).split(',')){
               const id = Number(segmentId)==0?1:Number(segmentId)
               Array.from({length:5},(_,index)=>{

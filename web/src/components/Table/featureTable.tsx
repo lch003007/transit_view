@@ -14,12 +14,13 @@ import Wrapper from "../Wrapper";
 import { ReactNode } from "react";
 
 interface Config{
-  where?:Record<string,string|number|Date>,
+  where?:Record<string,string|number|Date|Record<string,string|number|Date>>,
   data?:Record<string,string|number|Date>
 }
 
 // 定義數據的類型
 // ManualTable 組件
+
 export function FeatureTable({ 
     data=[],
     title={},
@@ -38,7 +39,7 @@ export function FeatureTable({
 
     config={}
 }: { 
-    data?: Record<string,string>[],
+    data?: Record<string,string|string[]|number>[],
     title?:Record<string,string|ReactNode>,
     filterValues?:Record<string,string|number>,
     totalFilter?:boolean,
@@ -49,19 +50,20 @@ export function FeatureTable({
     numberData?:string[],
     booleanData?:string[],
     addFunction?:()=>void,
-    editFunction?:(item:Record<string,string>)=>void,
-    deleteFunction?:(item:Record<string,string>)=>void,
+    editFunction?:(item:Record<string,string|number|string[]>)=>void,
+    deleteFunction?:(item:Record<string,string|number|string[]>)=>void,
     api?:boolean,
     config?:Config
  }) {
+  console.log(data)
   const {post} = useApi()
   const [tableData,setTableData] = useState(data)
   const [isLoading,setLoading] = useState(false)
   const {openDialog,keys} = useContext(DialogContext)
   const {addKey,deleteKey,editKey} = keys
   const [keyword,setKeyword] = useState('')
-  const [editData,setEditData] = useState<Record<string,string>>({})
-  const [deleteData,setDeleteData] = useState<Record<string,string>>({})
+  const [editData,setEditData] = useState<Record<string,string|number|string[]>>({})
+  const [deleteData,setDeleteData] = useState<Record<string,string|number|string[]>>({})
 
   // 處理頁數更改
 
@@ -69,6 +71,7 @@ export function FeatureTable({
     if(api){
       setLoading(true)
       post(path,config).then(res=>{
+        console.log(res)
         setTableData(res)
         setLoading(false)
       })
@@ -94,17 +97,18 @@ export function FeatureTable({
     //return true
   })
 
-  Object.keys(title).length>0?Object.keys(title).map(key=>{
-        if(hide.includes(key))
-        {
-            title[key] = <></>
-            return
-        }
-        title[key] = <>{title[key]?title[key]:key}</>
-        if(form){
-            title['form'] = <></>
-        }
-}):<></>
+    Object.keys(title).map(key=>{
+      if(hide.includes(key))
+      {
+          title[key] = <></>
+          return 0
+      }
+      title[key] = <>{title[key]?title[key]:key}</>
+      if(form){
+          title['form'] = <></>
+      }
+      return 0
+})
   
   
   const currentData = filteredData.map((item)=>{
@@ -167,13 +171,13 @@ export function FeatureTable({
 
 
   <MyDialog openKey={addKey}>
-    <Form booleanData={booleanData} numberData={numberData} addKey={addKey} editKey={editKey} deleteKey={deleteKey} path={`${path}/insert`} hide={hide} type={addKey} title={title} notNull={notNull} />
+    <Form  booleanData={booleanData} numberData={numberData} path={`${path}/insert`} hide={hide} type={addKey} title={title} notNull={notNull} />
   </MyDialog>
   <MyDialog openKey={editKey}>
-      <Form booleanData={booleanData} numberData={numberData} addKey={addKey} editKey={editKey} deleteKey={deleteKey} path={`${path}/update`} hide={hide} type={editKey} defaultData={editData} title={title} notNull={notNull} />
+      <Form  defaultData={editData} booleanData={booleanData} numberData={numberData} path={`${path}/update`} hide={hide} type={editKey} title={title} notNull={notNull} />
 </MyDialog> 
 <MyDialog openKey={deleteKey}>
-      <Form addKey={addKey} editKey={editKey} deleteKey={deleteKey} path={`${path}/delete`} hide={hide} type={deleteKey} defaultData={deleteData} title={title} notNull={notNull} />
+      <Form path={`${path}/delete`} hide={hide} type={deleteKey} defaultData={deleteData} title={title} notNull={notNull} />
 </MyDialog>
 </Wrapper>
   );

@@ -1,7 +1,7 @@
 'use client'
 import User from './user';
 import MyTab from '@/components/MyTab';
-import React, { Component } from 'react';
+import React from 'react';
 import { FeatureTable } from '@/components/Table/featureTable';
 
 interface TabData{

@@ -81,6 +81,7 @@ export class VdController {
 
   @Post('panelGroup/insert')
   async insertPanelGroup(@Body()props:panelGroupCreateManyData){
+    console.log(props)
     return this.repository.insertPanelGroup(props)
   }
 

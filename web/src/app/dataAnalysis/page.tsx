@@ -16,6 +16,7 @@ import { DialogContext } from "@/contexts/DialogContext"
 import GroupBar from "@/components/ItemPicker/groupBar";
 import MyDialog from "@/components/MyDialog";
 import { useSort } from "@/hooks/useSort";
+import AddGroup from "@/components/ItemPicker/addGroup";
 
 interface GroupData{
     id:number,
@@ -26,11 +27,11 @@ interface GroupData{
 
 export default function DataAnalysis(){
     const {sortRoad} = useSort()
-    const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
+    const {itemLength,group} = useContext(ItemPickerContext)
     const [groupData,setGroupData] = useState<GroupData[]>([])
     const {openDialog,keys} = useContext(DialogContext)
     const [editGroupName,setEditGroupName] = useState("")
-    const {panelGroupKey,panelDeleteKey} = keys
+    const {panelGroupKey,panelDeleteKey,panelGroupSaveAsKey} = keys
     const {post} = useApi()
     const [state,setState] = useState([{}])
     const {isLoading,setLoading} = useContext(LoadingContext)
@@ -47,21 +48,6 @@ export default function DataAnalysis(){
         })
     },[])
 
-    const saveAs = ()=>{
-        const roadIds:Number[] = []
-        Array.from({length:itemLength},(_,index)=>{
-            if(itemsSelected[index])
-                roadIds.push(itemsSelected[index]['id'])
-            else
-            roadIds.push(0)
-        })
-        post('vd/panelGroup/insert',{
-            itemLength:itemLength,
-            roadIds:roadIds.join(',')
-        })
-        window.location.reload()
-    }
-
     return <Wrapper isLoading={isLoading}><Box sx={{display:'flex',width:'100%',height:'100%'}}>
         <ItemPicker idKey="roadIds" itemGroups={groupData} groupItemKey="name" itemKey="location" title='路口選擇' itemOptions={state} />
         <Box sx={{width:'100%',height:'100%'}}>
@@ -72,7 +58,7 @@ export default function DataAnalysis(){
         </Box>
         <Grid spacing={1} container sx={{height:'90%',marginTop:'10px'}}>
             {Array.from({length:itemLength},(_,index)=>{
-                return <Grid item xs={12/Math.sqrt(itemLength)} sx={{height:`${100/Math.sqrt(itemLength)}%`}}>
+                return <Grid key={`grid${index}`} item xs={12/Math.sqrt(itemLength)} sx={{height:`${100/Math.sqrt(itemLength)}%`}}>
                     <VdChart id={index} endDate={endDate} />
                     </Grid>
             })}
@@ -81,10 +67,12 @@ export default function DataAnalysis(){
         </Box>
         <GroupBar remove={()=>{
                 openDialog(panelDeleteKey)
-            }} saveAs={saveAs} save={()=>{
+            }} saveAs={()=>{
+                openDialog(panelGroupSaveAsKey)
+            }} save={()=>{
                 if(group==0)
                 {
-                    saveAs()
+                    openDialog(panelGroupSaveAsKey)
                 }else{
                     openDialog(panelGroupKey)
                     const editGroupName = groupData.find((item:GroupData)=>item.id==group)?.name
@@ -95,6 +83,11 @@ export default function DataAnalysis(){
         <MyDialog openKey={panelGroupKey}>
         <EditGroup idKey={'roadIds'} path='vd/panelGroup/update' data={editGroupName} />
     </MyDialog>
+
+    <MyDialog openKey={panelGroupSaveAsKey}>
+        <AddGroup idKey={'roadIds'} path='vd/panelGroup/insert' />
+    </MyDialog>
+
     <MyDialog openKey={panelDeleteKey}>
         <DeleteGroup path='vd/panelGroup/delete' />
     </MyDialog>

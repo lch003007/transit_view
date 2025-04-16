@@ -65,5 +65,5 @@ export interface PanelData {
   export interface Routes {
       path: string;
       name: string;
-      icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>; // ✅ 直接適配 MUI 圖示
+      icon: OverridableComponent<SvgIconTypeMap<Record<string,unknown>, "svg">>; // ✅ 直接適配 MUI 圖示
   }

@@ -28,8 +28,8 @@ export default function GroupBar({save=()=>{},saveAs=()=>{},remove=()=>{}}:{save
         },
     ]
     return <MyBox sx={{marginLeft:'10px',display:'flex',flexDirection:'column',background:'white'}}>
-        {functionButtons.map((functionButton:FunctionButton)=>{
-            return <Tooltip title={functionButton.tooltip}><IconButton onClick={functionButton.onClick}>{functionButton.component}</IconButton></Tooltip>
+        {functionButtons.map((functionButton:FunctionButton,index:number)=>{
+            return <Tooltip key={`groupBar${index}`} title={functionButton.tooltip}><IconButton onClick={functionButton.onClick}>{functionButton.component}</IconButton></Tooltip>
         })}
         {/* <IconButton><Save/></IconButton>
         <IconButton><SaveAs/></IconButton>

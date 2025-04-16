@@ -99,21 +99,24 @@ export default function TravelTime(){
 
     },[])
     
-    // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
-    
     return <Wrapper isLoading={isLoading}>
       
       <FeatureTable addFunction={()=>{
         openDialog(addTravelTimeKey)
       }}
 
-      editFunction={(item:TravelEdit)=>{
-        setEditValue(item)
+      editFunction={(item:Record<string,string|number|string[]>)=>{
+        setEditValue({
+          id:Number(item.id),
+          name:String(item.name),
+          segments:Array.isArray(item.segments)?item.segments:[],
+          travelTime:String(item.travelTime)
+        })
         openDialog(editTravelTimeKey)
       }}
-
-      deleteFunction={(item:TravelEdit)=>{
-        setDeleteId(item.id)
+    
+      deleteFunction={(item:Record<string,string|number|string[]>)=>{
+        setDeleteId(Number(item.id))
         openDialog(deleteTravelTimeKey)
       }}
       
@@ -122,9 +125,6 @@ export default function TravelTime(){
       name:item['name'],travelTime:formatDuration(item['travelTime']),id:item['id'],segments:item['segments']
     }))} title={title} hide={['id','segments']} />
 
-      {/* <ManualTable data={tableData.map(item=>({
-      name:item['name'],travelTime:formatDuration(item['travelTime'])
-    }))} title={title} /> */}
 
     <MyDialog openKey={addTravelTimeKey}>
       <AddComponent data={tableData} />
@@ -188,6 +188,7 @@ function EditComponent({editValue,data}:{editValue:TravelEdit,data:TravelTime[]}
     {Array.from({ length: amount }, (_, index) => {
             return <>點位{index+1}:<MySelect labels={data.map((item:TravelTime)=>item.name)} ids={data.map((item:TravelTime)=>String(item.id))} state={String(state.segments[index])} setState={(data)=>{
               setState((prevData:TravelEdit)=>{
+                console.log(prevData)
                 const updatedSegments = [...prevData.segments]
                 updatedSegments[index] = String(data)
                 return {...prevData,segments:updatedSegments}

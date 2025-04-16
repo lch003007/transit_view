@@ -8,7 +8,9 @@ export class TrafficStatusController{
 
     @Post()
     async getTrafficStatus(@Body()props:trafficStatusFindManyArgs){
-        return this.repository.getTrafficStatus(props)
+        console.log(props)
+        const result = await this.repository.getTrafficStatus(props)
+        console.log(result)
+        return result
     }
-
 }

@@ -59,6 +59,7 @@ export default function StreamView({id}:{id:number}){
             setItemsSelected(groupData.roadData)
             setGroup(groupData.groupId)
         }else{
+            console.log(e.dataTransfer.getData('item'))
             setItemsSelected((prevData)=>{
                 return {...prevData,[id]:JSON.parse(e.dataTransfer.getData('item'))}
             })

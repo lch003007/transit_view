@@ -4,7 +4,7 @@ import { useContext } from "react"
 import { LayoutContext } from "@/contexts/LayoutContext"
 import Link from "next/link"
 import {routes} from '@/routes'
-import { getCookie } from "cookies-next";
+import { CookieValueTypes, getCookie } from "cookies-next";
 
 export default function Sidenav(){
     const {isSidenavHide,setHoverSidenav} = useContext(LayoutContext)
@@ -14,8 +14,8 @@ export default function Sidenav(){
     const outerExpendWidth = 1
     const innerCollapseWidth = 0.3
     const innerExpendWidth = 1
-    const auth:any = getCookie('auth')
-    const authArray = auth?[...JSON.parse(auth),'logout']:['logout']
+    const auth:CookieValueTypes | Promise<CookieValueTypes> = getCookie('auth')
+    const authArray = auth?[...JSON.parse(String(auth)),'logout']:['logout']
     return <Box sx={{
         height:'94vh',
         backgroundColor:'#212A39',

@@ -33,6 +33,7 @@ function DialogProvider({children}:{children:ReactNode}){
             editKey:'formEdit',
             panelKey:'panelEdit',
             panelGroupKey:'panelGroup',
+            panelGroupSaveAsKey:'panelGroupSaveAs',
             cctvGroupKey:'cctvGroup',
             panelDeleteKey:'deletePanelGroup',
             addTravelTimeKey:'addTravelTimeKey',

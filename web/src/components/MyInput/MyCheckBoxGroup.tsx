@@ -12,15 +12,15 @@ export default function MyCheckBoxGroup<T extends string = string>({ labels, set
   const [checkBox, setCheckBox] = useState(labels?.[0]);
 
   return (
-    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap",flexDirection:'column',background:'white' }}>
+    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap",flexDirection:'column',background:'white' }}>
       {labels?.map((label, index) => (
         <label
           key={index}
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "5px",
-            padding: "5px 10px",
+            gap: "1px",
+            padding: "2px 5px",
             border: checkBox === label ? "2px solid #007BFF" : "1px solid #CCC",
             borderRadius: "5px",
             cursor: "pointer",

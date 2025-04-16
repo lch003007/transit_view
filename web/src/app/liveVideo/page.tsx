@@ -5,7 +5,6 @@ import { Box,Grid } from "@mui/material"
 import { ItemPickerContext } from "@/contexts/ItemPickerContext"
 import { useContext, useEffect, useState } from "react"
 import { LoadingContext } from "@/contexts/Loading"
-import Loading from "../loading"
 import useApi from "@/hooks/useApi"
 import Wrapper from "@/components/Wrapper"
 import { DialogContext } from "@/contexts/DialogContext"
@@ -14,6 +13,7 @@ import MyDialog from "@/components/MyDialog"
 import EditGroup from "@/components/ItemPicker/editGroup"
 import DeleteGroup from "@/components/ItemPicker/deleteGroup"
 import { useSort } from "@/hooks/useSort"
+import AddGroup from "@/components/ItemPicker/addGroup"
 
 interface GroupData{
     id:number,
@@ -28,9 +28,9 @@ export default function LiveVideo(){
     const {post} = useApi()
     const [state,setState] = useState([{}])
     const {isLoading,setLoading} = useContext(LoadingContext)
-    const {itemLength,itemsSelected,group} = useContext(ItemPickerContext)
+    const {itemLength,group} = useContext(ItemPickerContext)
     const {openDialog,keys} = useContext(DialogContext)
-    const {panelGroupKey,panelDeleteKey} = keys
+    const {panelGroupKey,panelDeleteKey,panelGroupSaveAsKey} = keys
     const [editGroupName,setEditGroupName] = useState("")
     useEffect(()=>{
         setLoading(true)
@@ -43,35 +43,37 @@ export default function LiveVideo(){
         })
     },[])
 
-    const saveAs = ()=>{
-        const cctvIds:number[] = []
-        Array.from({length:itemLength},(_,index)=>{
-            if(itemsSelected[index])
-                cctvIds.push(itemsSelected[index]['id'])
-            else
-            cctvIds.push(0)
-        })
-        post('cctv/group/insert',{
-            itemLength:itemLength,
-            cctvIds:cctvIds.join(',')
-        })
-        window.location.reload()
-    }
+    // const saveAs = ()=>{
+    //     const cctvIds:number[] = []
+    //     Array.from({length:itemLength},(_,index)=>{
+    //         if(itemsSelected[index])
+    //             cctvIds.push(Number(itemsSelected[index]['id']))
+    //         else
+    //         cctvIds.push(0)
+    //     })
+    //     post('cctv/group/insert',{
+    //         itemLength:itemLength,
+    //         cctvIds:cctvIds.join(',')
+    //     })
+    //     window.location.reload()
+    // }
     
     return <Wrapper isLoading={isLoading}><Box sx={{display:'flex',width:'100%',height:'100%'}}>
     <ItemPicker idKey="cctvIds" itemGroups={groupData} groupItemKey="name" itemKey="location" title='路口選擇' itemOptions={state} />
     <Grid spacing={1} container>
         {Array.from({ length: itemLength }, (_, index) => {
-            return <Grid item xs={12/Math.sqrt(itemLength)}><StreamView id={index}  /></Grid>
+            return <Grid key={`livevideo${index}`} item xs={12/Math.sqrt(itemLength)}><StreamView id={index}  /></Grid>
         })}
     </Grid>
     {/* <StreamView id={1}  /> */}
     <GroupBar remove={()=>{
                 openDialog(panelDeleteKey)
-            }} saveAs={saveAs} save={()=>{
+            }} saveAs={()=>{
+                openDialog(panelGroupSaveAsKey)
+            }} save={()=>{
                 if(group==0)
                 {
-                    saveAs()
+                    openDialog(panelGroupSaveAsKey)
                 }else{
                     openDialog(panelGroupKey)
                     setEditGroupName(groupData.find((item:GroupData)=>item.id==group)?.name ||"")
@@ -80,6 +82,9 @@ export default function LiveVideo(){
     </Box>
     <MyDialog openKey={panelGroupKey}>
         <EditGroup idKey={'cctvIds'} path='cctv/group/update' data={editGroupName} />
+    </MyDialog>
+    <MyDialog openKey={panelGroupSaveAsKey}>
+        <AddGroup idKey={'cctvIds'} path='cctv/group/insert' />
     </MyDialog>
     <MyDialog openKey={panelDeleteKey}>
         <DeleteGroup path='cctv/group/delete' />

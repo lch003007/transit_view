@@ -2,11 +2,36 @@
 
 import { Box } from "@mui/material";
 import { MyButton,MyText } from "../MyInput";
-import { useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { DialogContext } from "@/contexts/DialogContext";
 import useApi from "@/hooks/useApi";
 
-export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',hide=[],path,numberData=[],booleanData=[],reload=true,callbackFunction=()=>{}}:any){
+export function Form({
+    title,
+    notNull=[],
+    defaultData={},
+    type,
+    buttonText='確定',
+    hide=[],
+    path,
+    numberData=[],
+    booleanData=[],
+    reload=true,
+    callbackFunction=()=>{}
+}:{
+    title:Record<string,string|ReactNode>,
+    notNull?:string[],
+    defaultData?:Record<string,string|number|string[]>,
+    type:string,
+    buttonText?:string,
+    hide:string[],
+    path:string,
+    numberData?:string[],
+    booleanData?:string[],
+    reload?:boolean,
+    callbackFunction?:(state:Record<string,string>)=>void
+}){
+    console.log(defaultData)
     const {post} = useApi()
     const {closeDialog,keys} = useContext(DialogContext)
     const {addKey,deleteKey,editKey,panelKey} = keys
@@ -24,7 +49,14 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
 
     useEffect(()=>{
         if(type!=addKey)
-            setState(defaultData)
+        {
+            const stateData:Record<string,string> = {}
+            Object.keys(defaultData).map(key=>{
+                stateData[key] = String(defaultData[key])
+            })
+            setState(stateData)
+        }
+            
     },[defaultData])
 
     return <Box sx={{padding:'15px'}}>
@@ -32,7 +64,7 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
         const item = title[key]
         if(hide.includes(key))
             return  <></>
-        return <Box sx={{
+        return <Box key={`Box${key}`} sx={{
             marginBottom:'10px',
             display:'flex',
             justifyContent:'space-between'
@@ -56,14 +88,14 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
         {
             if(notNullHasData){
                 if(type==addKey){
-                    const insertData: Record<string, any> = {};
+                    const insertData: Record<string,string|number|string[]> = {};
                     Object.keys(state).map(key=>{
                         const value = numberData.includes(key)?
                                         Number(state[key]):
                                         booleanData.includes(key)?
                                         Boolean(state[key]):
                                         state[key]
-                        insertData[key] = value
+                        insertData[key] = String(value)
                     })
                     post(path,insertData)
                     callback();
@@ -71,7 +103,7 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
                 else{
                     const updateData = {
                         where:{id:Number(defaultData['id'])},
-                        data: {} as Record<string, any>
+                        data: {} as Record<string,string|number|Date>
                 }
                 Object.keys(state).map(key=>{
                     if(defaultData[key]!=state[key])
@@ -82,7 +114,7 @@ export function Form({title,notNull=[],defaultData=[],type,buttonText='確定',h
                         Boolean(state[key]):
                         state[key]
 
-                        updateData['data'][key] = value
+                        updateData['data'][key] = String(value)
                     }
                         
                 })

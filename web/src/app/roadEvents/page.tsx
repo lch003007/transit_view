@@ -1,10 +1,7 @@
 'use client'
 import {Box} from "@mui/material";
-import { deleteCookie } from "cookies-next";
 import { FeatureTable } from "@/components/Table/featureTable";
 export default function RoadEvents(){
-    deleteCookie('jwt')
-    
     const title = {
         id:'編號',
         roadtype:'類別',
