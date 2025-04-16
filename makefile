@@ -5,8 +5,11 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_CONTAINER=postgres
 
-
 define EXEC_SQL
+	PGPASSWORD=$(DB_PASSWORD) psql -U $(DB_USER) -h $(DB_HOST) -p $(DB_PORT) -d $(DB_NAME) -f $(1)
+endef
+
+define DOCKER_EXEC_SQL
 	docker cp $(1) $(DB_CONTAINER):/tmp/$(notdir $(1))
 	docker exec -i -e PGPASSWORD=$(DB_PASSWORD) $(DB_CONTAINER) psql -U $(DB_USER) -d $(DB_NAME) -f /tmp/$(notdir $(1))
 	docker exec $(DB_CONTAINER) rm /tmp/$(notdir $(1))
