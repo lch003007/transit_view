@@ -78,7 +78,7 @@ export default function TravelTimeForecast(){
 
     // return <><ManualTable data={sampleData} title={{id:'編號',name:'名稱'}} filterValues={{}} /></>
     return <Wrapper isLoading={isLoading}>
-      <FeatureTable data={groupData}  title={title} />
+      <FeatureTable data={groupData}  title={title}  />
       {/* <ManualTable data={tableData}  title={title} /> */}
       </Wrapper>
   }

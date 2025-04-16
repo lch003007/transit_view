@@ -36,8 +36,8 @@ export function FeatureTable({
     editFunction,
     deleteFunction,
     api=false,
-
-    config={}
+    config={},
+    addColor='black'
 }: { 
     data?: Record<string,string|string[]|number>[],
     title?:Record<string,string|ReactNode>,
@@ -53,7 +53,8 @@ export function FeatureTable({
     editFunction?:(item:Record<string,string|number|string[]>)=>void,
     deleteFunction?:(item:Record<string,string|number|string[]>)=>void,
     api?:boolean,
-    config?:Config
+    config?:Config,
+    addColor?:string
  }) {
   console.log(data)
   const {post} = useApi()
@@ -161,7 +162,7 @@ export function FeatureTable({
       else{
         openDialog(addKey)
       }
-      }}><Add/></IconButton>
+      }}><Add sx={{color:addColor}}/></IconButton>
       </Box>:<></>  
     }
 

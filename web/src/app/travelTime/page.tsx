@@ -104,7 +104,7 @@ export default function TravelTime(){
       <FeatureTable addFunction={()=>{
         openDialog(addTravelTimeKey)
       }}
-
+      addColor="white"
       editFunction={(item:Record<string,string|number|string[]>)=>{
         setEditValue({
           id:Number(item.id),
